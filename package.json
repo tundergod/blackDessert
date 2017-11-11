@@ -1,0 +1,25 @@
+{
+  "name": "blackdessert",
+  "version": "1.0.0",
+  "description": "Wp2017 project Black Dessert",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tundergod/blackDessert.git"
+  },
+  "author": "tundergod",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tundergod/blackDessert/issues"
+  },
+  "homepage": "https://github.com/tundergod/blackDessert#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4",
+    "standard": "^10.0.3"
+  }
+}
