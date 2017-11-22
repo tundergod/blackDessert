@@ -1,0 +1,83 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Move</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+var pos = [3,0,0,0,0,0,0,0,0,0];
+var playerPos = 0;
+var count = 0;
+var text;
+var go = 0;
+
+function preload() {
+  game.load.image('sky', 'Tutorial/assets/sky.png');
+
+}
+
+function create() {
+  game.world.setBounds(-50,-50,1000,1000);
+  var image = game.add.sprite(0,0,'sky');
+  image.inputEnabled = true;
+  text = game.add.text(250, 16, '', {fill: '#ffffff'});
+  image.events.onInputDown.add(listener, this);
+  //game.debug.text(pos ,300,132);
+  //game.debug.text("移動到 "+ playerPos, 300, 196);
+}
+
+
+function listener(){
+  game.time.events.repeat(30, 5, walkL, this);
+  game.time.events.repeat(30, 5, walkL, this);
+  game.time.events.repeat(30, 15, walkR, this);
+  game.time.events.repeat(30, 15, walkR, this);
+  game.time.events.repeat(30, 20, walkL, this);
+  count = 0;
+  for(i=0; i<10; i++){
+    if(pos[i]==0)
+      count++;
+    else if(pos[i]==1)
+      count+=6;
+    else if(pos[i]==2)
+      count+=3;
+  }
+  go = Math.floor(Math.random() * count);
+  count = 0;
+  for(i=0; i<10; i++){
+    if(pos[i]==0)
+      count++;
+    else if(pos[i]==1)
+      count+=6;
+    else if(pos[i]==2)
+      count+=3;
+    if(go <= count){
+      pos[playerPos]=0;
+      playerPos=i;
+      pos[i]=3;
+      break;
+    }
+  }
+  text.text = pos +" 移動到:"+ playerPos;
+}
+
+function walkL(){ 
+  game.camera.x +=4;
+}
+function walkR(){ 
+  game.camera.x -=4;
+}
+</script>
+
+</body>
+</html>
