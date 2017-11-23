@@ -3,13 +3,39 @@
   <head>
     <meta charset="UTF-8">
     <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript"  src="js/CanvasInput.min.js"></script>
     <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
     <title>Black Dessert</title>
   </head>
   <body>
-      <h1>Welcome to Black Dessert!!!!!!</h1>
-      <div id="game"></div>
+      <!--whole container-->
+      <div class="main-container">
+
+        <!-- phaser-->
+        <div id="game"></div>
+
+        <!-- login container-->
+        <div class="login-container">
+          <table id="login-table">
+            <tr>
+              <td>username</td>
+              <td><canvas id="username" width="200" height="50"></canvas></td>
+            </tr>
+            <tr>
+              <td>password</td>
+              <td><canvas id="password" width="200" height="50"></canvas></td>
+            </tr>
+            <tr>
+              <td colspan="2"><button type="button">LOG IN!</button></td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
   </body>
+    <script src="js/CanvasInput.js" type="text/javascript"></script>
     <script src="js/game.js" type="text/javascript"></script>
     <script src="js/main.js" type="text/javascript"></script>
     <script src="js/client.js" type="text/javascript"></script>

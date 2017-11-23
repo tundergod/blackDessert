@@ -19,6 +19,7 @@
   "dependencies": {},
   "devDependencies": {
     "express": "^4.16.2",
+    "phaser-input": "^1.2.6",
     "socket.io": "^2.0.4",
     "standard": "^10.0.3"
   }

@@ -1,0 +1,24 @@
+#login-table{
+  display:none;
+  height:140px;
+  width:300px;
+  background-color:pink;
+  text-align:center;
+}
+#login-table, tr, td{
+  border:3px solid black;
+}
+.main-container{
+  position:absolute;
+  height:99%;
+  width:99%;
+}
+#game{
+  position:relative;
+  display:block;
+  margin:auto;
+}
+.login-container{
+  position:relative;
+}
+

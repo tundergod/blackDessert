@@ -6,14 +6,16 @@ var io = require('socket.io').listen(server)
 app.use('/css', express.static(__dirname + '/css'))
 app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
+app.use('/node_modules', express.static(__dirname + '/node_modules'))
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html')
 })
 
 server.lastPlayerID = 0
+port = 7778
 
-server.listen(process.env.PORT || 7777, function () {
+server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
 })
 
