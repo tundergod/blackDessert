@@ -3,6 +3,6 @@
 */
 var Certify = {}
 
-Certify.hi = function(){
-  console.log("hihi");
+Certify.hi = function () {
+  console.log('hihi')
 }

@@ -13,7 +13,7 @@ app.get('/', function (req, res) {
 })
 
 server.lastPlayerID = 0
-port = 7778
+var port = 7777
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
@@ -21,14 +21,13 @@ server.listen(process.env.PORT || port, function () {
 
 // 有新的client連接就會進入connection的callback function，傳入一個socket，可以利用這個socket跟client溝通
 io.on('connection', function (socket) {
-
   // socket.on是監聽事件
   // 以下監聽newplayer事件
   socket.on('newplayer', function () {
     socket.player = {
       id: server.lastPlayerID++
     }
-    console.log("A player is logging in ")
+    console.log('A player is logging in ')
 
     // socket.emit server <--> client
     socket.emit('allplayers', getAllPlayers())
@@ -37,7 +36,7 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('newplayer', socket.player)
 
     // JSON for connected players
-    console.log("----Player list:----\n" + JSON.stringify(getAllPlayers()) + "\n")
+    console.log('----Player list:----\n' + JSON.stringify(getAllPlayers()) + '\n')
 
     // 監聽disconnect事件
     socket.on('disconnect', function () {
