@@ -24,7 +24,19 @@ var text2
 
 // image
 var map
-var loc = ['map', 'castle_unchoose', 'castle_choose', 'forest_unchoose', 'forest_choose', 'lake_cunhoose', 'lake_choose', 'town_unchoose', 'town_choose', 'cave_unchoose', 'cave_choose']
+var loc = [
+  'map', 
+  'castle_choose', 
+  'castle_choose2', 
+  'forest_choose', 
+  'forest_choose2', 
+  'lake_choose', 
+  'lake_choose2', 
+  'town_choose', 
+  'town_choose2', 
+  'cave_choose', 
+  'cave_choose2'
+]
 
 // canvas input for login - username and password
 var input1 = new CanvasInput({
@@ -82,16 +94,21 @@ Game.preload = function () {
   game.load.image('map', '../assets/scene_choose/map.png')
   game.load.image('title', '../assets/scene_choose/title.png')
   game.load.image('map_back', '../assets/scene_choose/map_back.png')
-  game.load.image('castle_choose', '../assets/scene_choose/castle_choose.png')
-  game.load.image('castle_unchoose', '../assets/scene_choose/castle_unchoose.png')
-  game.load.image('forest_choose', '../assets/scene_choose/forest_choose.png')
-  game.load.image('forest_unchoose', '../assets/scene_choose/forest_unchoose.png')
-  game.load.image('town_choose', '../assets/scene_choose/town_choose.png')
-  game.load.image('town_unchoose', '../assets/scene_choose/town_unchoose.png')
-  game.load.image('lake_choose', '../assets/scene_choose/lake_choose.png')
-  game.load.image('lake_unchoose', '../assets/scene_choose/lake_unchoose.png')
-  game.load.image('cave_choose', '../assets/scene_choose/cave_choose.png')
-  game.load.image('cave_unchoose', '../assets/scene_choose/cave_unchoose.png')
+  game.load.image('castle_choose2', '../assets/scene_choose/castle_choose.png')
+  game.load.image('castle_choose', '../assets/scene_choose/castle_unchoose.png')
+  game.load.image('1', '../assets/scene_choose/castle_unchoose.png')
+  game.load.image('forest_choose2', '../assets/scene_choose/forest_choose.png')
+  game.load.image('forest_choose', '../assets/scene_choose/forest_unchoose.png')
+  game.load.image('3', '../assets/scene_choose/forest_unchoose.png')
+  game.load.image('town_choose2', '../assets/scene_choose/town_choose.png')
+  game.load.image('town_choose', '../assets/scene_choose/town_unchoose.png')
+  game.load.image('7', '../assets/scene_choose/town_unchoose.png')
+  game.load.image('lake_choose2', '../assets/scene_choose/lake_choose.png')
+  game.load.image('lake_choose', '../assets/scene_choose/lake_unchoose.png')
+  game.load.image('5', '../assets/scene_choose/lake_unchoose.png')
+  game.load.image('cave_choose2', '../assets/scene_choose/cave_choose.png')
+  game.load.image('cave_choose', '../assets/scene_choose/cave_unchoose.png')
+  game.load.image('9', '../assets/scene_choose/cave_unchoose.png')
 
   // button
   game.load.image('HP_bar', '../assets/scene_search/HP_bar.png')
@@ -175,8 +192,9 @@ function pressStart () {
   for (let i = 0; i < 5; i++) {
     // add sprite
     actor[i] = game.add.sprite(positionX, 150, actor[i])
-    actor[i].width = width / 5
-    actor[i].height = height / 2
+    actor[i].scale.setTo(0.2, 0.2)
+  //  actor[i].width = width / 5
+  //  actor[i].height = height / 2
 
     // fadein
     actor[i].alpha = 0
@@ -197,7 +215,7 @@ function heroSelect () {
     font: '32px Arial',
     fill: '#ff0044',
     align: 'center',
-    backgroundColor: '#ffff00'
+    backgroundColor:'#ffff00'
   }
 
   text2 = game.add.text(10, height - 50, 'Click me to start game', style)
@@ -219,23 +237,33 @@ function startGame () {
   map.height = height
 
   // load location
-  loc[1] = game.add.sprite(game.world.centerX, game.world.centerY, loc[1])
-  loc[1].scale.setTo(1, 1)
+  for(let i = 1; i <=10 ; i+=2){
+    loc[i] = game.add.sprite(game.world.centerX, game.world.centerY, loc[i])
+    loc[i].scale.setTo(0.6, 0.6)
+    loc[i].inputEnabled = true 
+    loc[i].input.enableDrag()
+
+    //hover
+    loc[i].events.onInputOver.add(inhover, {val:i})
+    loc[i].events.onInputOut.add(outhover, {val:i})
+
+    //click
+    //loc[1].events.onInputDown.add(wahaha, this);
+  }
+
   loc[1].anchor.setTo(0.4, 0.8)
-  loc[1].inputEnabled = true
-  // hover
-  loc[1].events.onInputOver.add(inn, this)
-  loc[1].events.onInputOut.add(out, this)
-  // loc[1].events.onInputDown.add(wahaha, this);
-  loc[1].input.enableDrag()
+  loc[3].anchor.setTo(1.0, 2.0)
+  loc[5].anchor.setTo(0.4, 1.8)
+  loc[7].anchor.setTo(0.6, 0.8)
+  loc[9].anchor.setTo(0.7, 0.2)
 }
 
-function inn () {
-  loc[1].loadTexture(loc[2], 0)
+function inhover () {
+  loc[this.val].loadTexture(loc[this.val + 1])
 }
 
-function out () {
-  loc[1].loadTexture('castle_unchoose', 0)
+function outhover () {
+  loc[this.val].loadTexture(this.val)
 }
 
 // inside loc
