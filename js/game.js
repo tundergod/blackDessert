@@ -6,14 +6,28 @@ var Game = {}
 // button
 var titleAnimate
 var startButton
+var style = {
+    font: '32px Arial',
+    fill: '#ff0044',
+    align: 'center',
+    backgroundColor: '#ffff00'
+}
 
 // actor
+var locc = []
 var actor = ['assassin', 'bard', 'ninja', 'sniper', 'swordman']
 var assassin
 var bard
 var ninja
 var sniper
 var swordman
+var text3
+
+//info
+var playerInfo = {
+  "heroChoose":"",
+  "hp":""
+}
 
 // background
 var bg
@@ -24,8 +38,11 @@ var text2
 
 // image
 var map
+
+var textChooseHero, textComfirm
+
+var search, fight, hero, skill, hpFrame, scene, hp
 var loc = [
-  'map', 
   'castle_choose', 
   'castle_choose2', 
   'forest_choose', 
@@ -36,6 +53,14 @@ var loc = [
   'town_choose2', 
   'cave_choose', 
   'cave_choose2'
+]
+
+var scenes = [
+  "castle",
+  "forest",
+  "lake",
+  "town",
+  "cave"
 ]
 
 // canvas input for login - username and password
@@ -92,8 +117,9 @@ Game.preload = function () {
 
   // map
   game.load.image('map', '../assets/scene_choose/map.png')
-  game.load.image('title', '../assets/scene_choose/title.png')
-  game.load.image('map_back', '../assets/scene_choose/map_back.png')
+  game.load.image('title', '../assets/scene_search/title.png')
+  game.load.image('pressStart', '../assets/scene_search/press_to_start.png')
+  game.load.image('background', '../assets/scene_choose/map_back.png')
   game.load.image('castle_choose2', '../assets/scene_choose/castle_choose.png')
   game.load.image('castle_choose', '../assets/scene_choose/castle_unchoose.png')
   game.load.image('1', '../assets/scene_choose/castle_unchoose.png')
@@ -118,87 +144,79 @@ Game.preload = function () {
   game.load.image('HP_frame', '../assets/scene_search/HP_frame.png')
   game.load.image('attack_button', '../assets/scene_search/attack_button.png')
   game.load.image('skill_button', '../assets/scene_search/skill_button.png')
+
+  //location
+  game.load.image('forest', '../assets/scene_search/Map_Forest.png')
+  game.load.image('lake', '../assets/scene_search/Map_Forest.png')
+  game.load.image('castle', '../assets/scene_search/Map_Forest.png')
+  game.load.image('town', '../assets/scene_search/Map_Forest.png')
+  game.load.image('cave', '../assets/scene_search/Map_Forest.png')
 }
+
 Game.create = function () {
+
   // 出發Client.askNewPlayer事件 -> client.js
   Client.askNewPlayer()
 
+  // add screen shake plugin
+  game.plugins.screenShake = game.plugins.add(Phaser.Plugin.ScreenShake);
+
   // set background
-  game.stage.backgroundColor = '#000000'
-  bg = game.add.sprite(0, 0, 'map_back')
+  bg = game.add.sprite(0, 0, 'background')
   bg.width = width
   bg.height = height
   bg.alpha = 0
   game.add.tween(bg).to({ alpha: 1 }, 100, Phaser.Easing.Linear.None, true)
 
-  // title fadeiin
-  titleAnimate = game.add.sprite(game.world.centerX, game.world.centerY, 'title')
-  titleAnimate.width = width * 0.8
-  titleAnimate.height = height * 0.8
-  titleAnimate.anchor.setTo(0.5, 0.6)
-  titleAnimate.alpha = 0
-  game.add.tween(titleAnimate).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
+  // title fadein
+  title = game.add.sprite(0, 0, 'title')
+  title.width = width
+  title.height = height
+  title.alpha = 0
+  game.add.tween(title).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
 
-  // start game button
-  startButton = game.add.button(game.world.centerX, game.world.centerY, 'walk_button', pressStart)
-  startButton.scale.setTo(0.4, 0.4)
-  startButton.anchor.setTo(0.5, -0.5)
+  // title clickable -> choose hero
+  title.inputEnabled = true
+  title.events.onInputDown.add(chooseHero)
+
+  // start game button(press to start)
+  // animation -> blink
+  startButton = game.add.sprite(game.world.centerX, game.world.centerY, 'pressStart');
+  startButton.scale.setTo(1.0, 0.6)
+  startButton.anchor.setTo(0.5, -4.0)
   startButton.alpha = 0
-  game.add.tween(startButton).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
-
-  cursors = game.input.keyboard.createCursorKeys()
+  game.add.tween(startButton).to( { alpha: 1 }, 1500, Phaser.Easing.Linear.None, true, 0, 1000, true);
 }
 
 Game.update = function () {
-  //  This allows us to move the game camera using the keyboard
-
-  if (cursors.left.isDown) {
-    game.camera.x -= 2
-  } else if (cursors.right.isDown) {
-    game.camera.x += 2
-  }
-
-  if (cursors.up.isDown) {
-    game.camera.y -= 2
-  } else if (cursors.down.isDown) {
-    game.camera.y += 2
-  }
 }
 
 Game.render = function () {
   game.debug.inputInfo(16, 16)
 }
 
-function pressStart () {
-  console.log('pressed start')
+function chooseHero () {
 
-  // invisible button and title
+  // destroy button and title
   startButton.destroy()
-  titleAnimate.destroy()
+  title.destroy()
 
   // choose actor
   var positionX = 0
-  var style = {
-    font: '32px Arial',
-    fill: '#ff0044',
-    align: 'center',
-    backgroundColor: '#ffff00'
-  }
 
-  text1 = game.add.text(10, 10, 'Choose Hero~~~~', style)
-
+  textChooseHero = game.add.text(game.world.centerX, 20, 'Choose Hero', style)
+  textChooseHero.anchor.setTo(0.5,0) 
   var fadeInTime = 500
 
   for (let i = 0; i < 5; i++) {
-    // add sprite
+    // add all hero sprite 
     actor[i] = game.add.sprite(positionX, 150, actor[i])
-    actor[i].scale.setTo(0.2, 0.2)
-  //  actor[i].width = width / 5
-  //  actor[i].height = height / 2
+    actor[i].scale.setTo(0.4, 0.4)
 
-    // fadein
+    // fadein animation
     actor[i].alpha = 0
     game.add.tween(actor[i]).to({ alpha: 1 }, fadeInTime, Phaser.Easing.Linear.None, true)
+
     positionX += width / 5
     fadeInTime += 500
 
@@ -206,69 +224,162 @@ function pressStart () {
     actor[i].inputEnabled = true
     actor[i].events.onInputDown.add(heroSelect, {param: actor[i]})
   }
+
+  textComfirm = game.add.text(game.world.centerX, height - 100, 'START', style)
+  textComfirm.anchor.setTo(0.5,0)
+  textComfirm.visible = false
+
 }
 
 function heroSelect () {
-  text1.text = 'Choose Hero, you choose ' + this.param.key
 
-  var style = {
-    font: '32px Arial',
-    fill: '#ff0044',
-    align: 'center',
-    backgroundColor:'#ffff00'
+  console.log("heroselect")
+
+  textComfirm.visible = true
+  textChooseHero.text = 'Choose Hero, you choose ' + this.param.key
+  textComfirm.inputEnabled = true
+
+  // start game
+  if(textComfirm.events.onInputDown.add(startGameInit)){
+    playerInfo.heroChoose = this.param.key
   }
-
-  text2 = game.add.text(10, height - 50, 'Click me to start game', style)
-  text2.inputEnabled = true
-  text2.events.onInputDown.add(startGame)
 }
 
-function startGame () {
-  // destroy all image
+var textScene
+// all object will create in startGameInit function
+function startGameInit(){
+  console.log("init")
+  // check hero selected
+  console.log("hero = " + playerInfo.heroChoose)
+
+  // destroy item not use anymore
+  textComfirm.destroy()
+  textChooseHero.destroy()
   for (let i = 0; i < 5; i++) {
     actor[i].destroy()
   }
-  text1.destroy()
-  text2.destroy()
 
   // load map
-  map = game.add.sprite(0, 0, 'map')
+  map = game.add.sprite(0,0,'map')
   map.width = width
   map.height = height
 
+  //load scene
+  scene = game.add.sprite(0,0)
+
   // load location
-  for(let i = 1; i <=10 ; i+=2){
-    loc[i] = game.add.sprite(game.world.centerX, game.world.centerY, loc[i])
-    loc[i].scale.setTo(0.6, 0.6)
-    loc[i].inputEnabled = true 
-    loc[i].input.enableDrag()
-
-    //hover
-    loc[i].events.onInputOver.add(inhover, {val:i})
-    loc[i].events.onInputOut.add(outhover, {val:i})
-
-    //click
-    //loc[1].events.onInputDown.add(wahaha, this);
+  for(let i = 0; i < 5; i++){
+    locc[i] = game.add.sprite(game.world.centerX, game.world.centerY)
+    locc[i].scale.setTo(1,1)
+    locc[i].inputEnabled = true
   }
 
-  loc[1].anchor.setTo(0.4, 0.8)
-  loc[3].anchor.setTo(1.0, 2.0)
-  loc[5].anchor.setTo(0.4, 1.8)
-  loc[7].anchor.setTo(0.6, 0.8)
-  loc[9].anchor.setTo(0.7, 0.2)
+  // load scene
+  text3 = game.add.text(width - 200, 10,"")
+  textScene = game.add.text(game.world.centerX,100,'')
+  fight = game.add.sprite(0,0)
+  search = game.add.sprite(0,0)
+  hero = game.add.sprite(0,0)
+  hp = game.add.sprite(0,0)
+  skill = game.add.sprite(0,0)
+  hpFrame = game.add.sprite(0,0)
+
+  startGame()
+}
+
+
+
+function startGame () {
+  map.loadTexture("map")
+  scene.loadTexture()
+  fight.loadTexture()
+  search.loadTexture()
+  hero.loadTexture()
+  skill.loadTexture()
+  hp.loadTexture()
+  hpFrame.loadTexture()
+  text3.text = ""
+
+  var j = 0
+  for(let i = 0; i < 10 ; i+=2){
+    //revive image
+    locc[j].revive()
+    console.log(loc[i])
+    locc[j].loadTexture(loc[i])
+
+      //hover
+      locc[j].events.onInputOver.add(inhover, {vali:i,valj:j})
+      locc[j].events.onInputOut.add(outhover, {vali:i,valj:j})
+
+      //click
+      locc[j].events.onInputDown.add(inScenes, {vali:i,valj:j});
+
+      j++
+  }
+
+  locc[0].anchor.setTo(0.4, 0.8)
+  locc[1].anchor.setTo(2.15, 1.0)
+  locc[2].anchor.setTo(-0.7, -0.2)
+  locc[3].anchor.setTo(-0.7,1.3)
+  locc[4].anchor.setTo(3.2, -0.6)
 }
 
 function inhover () {
-  loc[this.val].loadTexture(loc[this.val + 1])
+  locc[this.valj].loadTexture()
+  locc[this.valj].loadTexture(loc[this.vali + 1])
 }
 
 function outhover () {
-  loc[this.val].loadTexture(this.val)
+  locc[this.valj].loadTexture()
+  locc[this.valj].loadTexture(loc[this.vali])
+}
+function inScenes () {
+  
+  scene.loadTexture(scenes[this.valj])
+  map.loadTexture()
+  textScene.text = scenes[this.valj]
+  textScene.anchor.setTo(0.5,0)
+
+  for(let i = 0 ; i <5; i++ ){
+    locc[i].kill()
+    locc[i].loadTexture()
+  }
+  search.loadTexture('walk_button')
+  search.scale.setTo(0.8,0.8)
+  search.anchor.setTo(-5.3,-2.2)
+  search.inputEnabled = true
+  search.events.onInputDown.add(shake);
+  
+
+  fight.loadTexture("attack_button")
+  fight.scale.setTo(0.8,0.8)
+  fight.anchor.setTo(-6.5,-4)
+
+  text3.text = 'BACK'
+  text3.inputEnabled = true
+  text3.events.onInputDown.add(startGame);
+
+  hero.loadTexture(playerInfo.heroChoose)
+  hero.scale.setTo(0.7,0.7)
+  hero.anchor.setTo(0,-0.3)
+  
+  //skill.loadTexture(playerInfo.heroChoose +"_skill_icon")
+  skill.loadTexture("ninja_skill_icon")
+  skill.scale.setTo(0.7,0.7)
+  skill.position.x = skill.width/2
+  skill.position.y = height - skill.height * 1.5
+
+  hp.loadTexture('HP_bar')
+  hp.scale.setTo(0.8,0.8)
+  hp.position.x = skill.width * 1.5
+  hp.position.y = height  - skill.height * 1.3
+
+  hpFrame.loadTexture('HP_frame')
+  hpFrame.scale.setTo(0.8,0.8)
+  hpFrame.position.x = skill.width * 1.5
+  hpFrame.position.y = height  - skill.height * 1.3
 }
 
-// inside loc
-function wahaha () {
-  map.destroy()
-  loc[1].destroy()
-  bg.destroy()
+function shake() {
+  game.plugins.screenShake.shake(30);
 }
