@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style>
+		html,body{
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		#container canvas{
+			margin: auto;
+		}
+	</style>
+	<script src="js/phaser.min.js"></script>
+</head>
+<body>
+	<div id="container"></div>
+	<script>
+	onload=function(){
+		
+    var pos = [];
+    var playerPos = -1;
+    var count = 0;
+    var text;
+    var go = 0;
+    var sceneNumber = 0;
+
+    for(i=0;i<5;i++){//初始化每個scene的內容物
+      pos[i]=[];
+      for(j=0;j<10;j++){
+        pos[i][j]=0;
+        if(j==i+2)
+          pos[i][j]=1;//1代表其他玩家
+      }    
+    }
+
+
+		var bootState = function(game){
+			this.preload=function(){
+				game.load.image('loading','assets/preloader.gif');
+			};
+			this.create=function(){
+				game.state.start('loader');
+			};
+		}
+
+		var loaderState=function(game){
+			var progressText;
+			this.init=function(){
+				var sprite=game.add.image(game.world.centerX,game.world.centerY,'loading');
+				sprite.anchor={x:0.5,y:0.5};
+				progressText=game.add.text(game.world.centerX,game.world.centerY+30,'0%',{fill:'#fff',fontSize:'16px'});
+				progressText.anchor={x:0.5,y:0.5};
+			};
+			this.preload=function(){
+        game.load.image('sky', 'assets/sky.png');
+        game.load.image('returnToMap', 'assets/skill_button.png');//借用技能按鍵當作返回鍵，放右下
+        game.load.image('scene1', 'assets/castle_unchoose.png');
+        game.load.image('scene2', 'assets/cave_unchoose.png');
+        game.load.image('scene3', 'assets/forest_unchoose.png');
+        game.load.image('scene4', 'assets/lake_unchoose.png');
+        game.load.image('scene5', 'assets/town_unchoose.png');
+				game.load.onFileComplete.add(function(progress){
+					progressText.text=progress+'%';
+				});
+
+			};
+			this.create=function(){
+				if (progressText.text=="100%") {
+					game.state.start('map');
+				}
+			};
+		}
+
+    var mapState = function(game){
+      this.create=function(){
+        scene1=game.add.image(0,0, 'scene1');
+        scene1.scale.setTo(0.5,0.5);
+        scene1.inputEnabled = true;
+        scene1.events.onInputUp.add(enterScene1, this);
+
+        scene2=game.add.image(300,0, 'scene2');
+        scene2.scale.setTo(1,1);
+        scene2.inputEnabled = true;
+        scene2.events.onInputUp.add(enterScene2, this);
+
+        scene3=game.add.image(600,0, 'scene3');
+        scene3.scale.setTo(0.5,0.5);
+        scene3.inputEnabled = true;
+        scene3.events.onInputUp.add(enterScene3, this);
+
+        scene4=game.add.image(0,300, 'scene4');
+        scene4.scale.setTo(0.3,0.3);
+        scene4.inputEnabled = true;
+        scene4.events.onInputUp.add(enterScene4, this);
+
+        scene5=game.add.image(400,300, 'scene5');
+        scene5.scale.setTo(0.5,0.5);
+        scene5.inputEnabled = true;
+        scene5.events.onInputUp.add(enterScene5, this);
+        
+      };
+    }
+
+    var moveState = function(game){
+        this.create=function(){
+          game.world.setBounds(-50,-50,1000,1000);
+          var background = game.add.sprite(0,0,'sky');
+          var returnToMap = game.add.image(650, 450, 'returnToMap');
+          background.inputEnabled = true;
+          returnToMap.inputEnabled = true;
+          text = game.add.text(250, 16, '', {fill: '#ffffff'});//把陣列顯示出來方便監控，裡面的3代表本機玩家
+          text.text = pos[sceneNumber-1] +" 移動到:"+ playerPos;
+          background.events.onInputUp.add(move, this);
+          returnToMap.events.onInputUp.add(toMap, this);
+        };
+    }
+
+
+		var gameState = function(game){
+			var bmd=[];
+			var block=[];
+			var top;
+			this.create=function(){
+			    //var width=game.world.width/4;
+          var width=200;
+			    //var height=game.world.height/4;
+          var height=150;
+			    for (var i = 0; i < 52; i++) {
+				    bmd[i] = game.add.bitmapData(width,height);
+				    bmd[i].ctx.beginPath();
+				    bmd[i].ctx.rect(0, 0, width, height);
+				    bmd[i].ctx.strokeStyle = "black";
+					  bmd[i].ctx.strokeRect(0,0,width,height);
+					  bmd[i].ctx.fillStyle='#fff';
+			    	bmd[i].ctx.fill();
+					  bmd[i].ctx.stroke();
+				    block[i]=game.add.sprite(0, 0, bmd[i]);
+				    block[i].inputEnabled = true;
+					  block[i].tint=0xffffff;
+			    }
+			    for (var i = 0; i < block.length-1; i=i+4) {
+			    	block[GetRandomNum(i,i+3)].tint=0x778899;
+			    }
+			    for (var i = 1; i < block.length; i++) {
+			    	if (i%4==0) {
+				    	block[i].x=block[0].x;
+				    	block[i].y=block[i-1].y+block[i-1].height;
+				    } else {
+				    	block[i].x=block[i-1].x+block[i-1].width;
+				    	block[i].y=block[i-1].y
+				    }
+			    }
+			    top=block[block.length-1].y+block[block.length-1].height;
+				for (var i = 0; i < block.length; i++) {
+					block[i].y-=top;
+				}
+			};
+      var point=0;
+			this.update=function(){
+				for (var i = 0; i < block.length; i++) {
+					block[i].y=block[i].y+10;
+					block[i].events.onInputDown.add(onDown, this);
+				}
+				for (var i = 0; i < block.length; i++) {
+					if (block[i].tint==0xff0000) {
+						point--;
+					} 
+				}
+				if (block[0].y==0) {
+          game.time.events.repeat(1200, 1, leave, this);
+				} 
+      
+			}
+		}
+
+		function onDown(block){
+			if (block.tint==0x778899) {
+				block.tint=0x00ff00;
+				point++;
+				return;
+			}
+			block.tint=0xff0000;
+		}
+    
+		function enterScene1(){
+      sceneNumber=1;
+			game.state.start('move');
+		}
+		function enterScene2(){
+      sceneNumber=2;
+			game.state.start('move');
+		}
+		function enterScene3(){
+      sceneNumber=3;
+			game.state.start('move');
+		}
+		function enterScene4(){
+      sceneNumber=4;
+			game.state.start('move');
+		}
+		function enterScene5(){
+      sceneNumber=5;
+			game.state.start('move');
+		}
+		function leave(){
+			game.state.start('move');
+		}
+
+    
+ 
+    function move(){
+      game.time.events.repeat(30, 5, walkL, this);//鏡頭左右晃動
+      game.time.events.repeat(30, 5, walkL, this);
+      game.time.events.repeat(30, 15, walkR, this);
+      game.time.events.repeat(30, 15, walkR, this);
+      game.time.events.repeat(30, 20, walkL, this);
+      count = 0;
+      for(i=0; i<10; i++){
+        if(pos[sceneNumber-1][i]==0)//空格
+          count++;  //count為加權數，空格1倍、玩家6倍、道具3倍
+        else if(pos[sceneNumber-1][i]==1)//玩家
+          count+=6;
+        else if(pos[sceneNumber-1][i]==2)//道具
+         count+=3;
+      }
+      go = Math.floor(Math.random() * count);
+      count = 0;
+      for(i=0; i<10; i++){
+        if(pos[sceneNumber-1][i]==0)
+          count++;
+        else if(pos[sceneNumber-1][i]==1)
+          count+=6;
+        else if(pos[sceneNumber-1][i]==2)
+          count+=3;
+        if(go <= count){
+          temp=pos[sceneNumber-1][i];
+          if(playerPos != -1)
+            pos[sceneNumber-1][playerPos]=0;
+          pos[sceneNumber-1][i]=3;
+          playerPos=i;
+          if(temp==1)
+            game.state.start('main');//遇到玩家進入戰鬥
+        break;
+        }
+      }
+      text.text = pos[sceneNumber-1] +" 移動到:"+ playerPos;
+    }
+
+    function toMap(){
+      pos[sceneNumber-1][playerPos] = 0;
+      playerPos = -1;
+      game.state.start('map');
+    }
+
+    function walkL(){//鏡頭搖晃 
+      game.camera.x +=4;
+    }
+    function walkR(){ 
+      game.camera.x -=4;
+    }
+
+		var game=new Phaser.Game(800,600,Phaser.AUTO,'container');
+		game.state.add('boot',bootState);
+		game.state.add('loader',loaderState);
+    game.state.add('map',mapState);
+    game.state.add('move',moveState);
+		game.state.add('main',gameState);
+		game.state.start('boot');
+	
+
+
+	function GetRandomNum(Min,Max){
+		var Range = Max - Min; 
+		var Rand = Math.random(); 
+		return(Min + Math.round(Rand * Range)); 
+	}
+  }
+	</script>
+</body>
+</html>
