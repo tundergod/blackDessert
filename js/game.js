@@ -25,8 +25,22 @@ var text3
 
 //info
 var playerInfo = {
+  "username":"",
+  "playerState":"", //login=0,chooseHero=1,inGame=2
   "heroChoose":"",
-  "hp":""
+  "heroState":{
+    "hp":"100", // maximum=100 <--- minimum=0
+    "skill":"", // false=0,true=1
+    "state":"", // fighting=2,searching=1,nothing=0
+    "locate":"", // map=0,castle=1,forest=2,lake=3,t  own=4,cave=5
+    "search":"", // no=0 , yes=1
+    "equiment":{
+      "weapon":"",
+      "armor":""
+    },
+    "material":"",
+    "from":""
+  }
 }
 
 // background
@@ -155,8 +169,15 @@ Game.preload = function () {
 
 Game.create = function () {
 
+/***************************************************************/
   // 出發Client.askNewPlayer事件 -> client.js
+  // 向server發出登入通知
+  // get id
+  playerInfo.playerState = 0 //login
+  playerInfo.from = 'create'
   Client.askNewPlayer()
+  Client.sendUpdateInfo()
+/***************************************************************/
 
   // add screen shake plugin
   game.plugins.screenShake = game.plugins.add(Phaser.Plugin.ScreenShake);
@@ -189,6 +210,19 @@ Game.create = function () {
 }
 
 Game.update = function () {
+  if(playerInfo.heroState.hp == 0){
+    var gameover = game.add.sprite(0,0,'title')
+    gameover.height = height
+    gameover.width = width
+
+    var style1 = {
+      font: '150px Arial',
+      fill: '#ff0044',
+      align: 'center',
+      backgroundColor: 'blue'
+}
+    var textGameover = game.add.text(0,0,'GAME OVER',style1)
+  }
 }
 
 Game.render = function () {
@@ -196,6 +230,12 @@ Game.render = function () {
 }
 
 function chooseHero () {
+
+/***************************************************************/
+  playerInfo.playerState = 1
+  playerInfo.from = 'choosehero'
+  Client.sendUpdateInfo()
+/***************************************************************/
 
   // destroy button and title
   startButton.destroy()
@@ -230,11 +270,15 @@ function chooseHero () {
   textComfirm.visible = false
 
 }
+/*
+Game.sendUpdate = function(){
+  Client.sendUpdateInfo(playerInfo)
+}
+*/
 
 function heroSelect () {
 
-  console.log("heroselect")
-
+//  Game.sendUpdate()
   textComfirm.visible = true
   textChooseHero.text = 'Choose Hero, you choose ' + this.param.key
   textComfirm.inputEnabled = true
@@ -248,6 +292,17 @@ function heroSelect () {
 var textScene
 // all object will create in startGameInit function
 function startGameInit(){
+
+
+/****init***********************************************************/
+  playerInfo.playerState = 2 //inGame
+  playerInfo.heroState.skill = 1
+  playerInfo.heroState.state = 0
+  playerInfo.from = 'init'
+  Client.sendUpdateInfo()
+
+/***************************************************************/
+
   console.log("init")
   // check hero selected
   console.log("hero = " + playerInfo.heroChoose)
@@ -288,8 +343,18 @@ function startGameInit(){
 }
 
 
+var check = 0 
 
 function startGame () {
+  check = 0
+/************************************************************/
+  // in map 
+  playerInfo.heroState.locate = 'map'
+  playerInfo.from = 'start'
+  Client.sendUpdateInfo()
+
+/************************************************************/
+
   map.loadTexture("map")
   scene.loadTexture()
   fight.loadTexture()
@@ -299,12 +364,12 @@ function startGame () {
   hp.loadTexture()
   hpFrame.loadTexture()
   text3.text = ""
+  textScene.text = ''
 
   var j = 0
   for(let i = 0; i < 10 ; i+=2){
     //revive image
     locc[j].revive()
-    console.log(loc[i])
     locc[j].loadTexture(loc[i])
 
       //hover
@@ -312,8 +377,8 @@ function startGame () {
       locc[j].events.onInputOut.add(outhover, {vali:i,valj:j})
 
       //click
-      locc[j].events.onInputDown.add(inScenes, {vali:i,valj:j});
-
+      //locc[j].events.onInputDown.add(inScenes, {valj:j});
+      locc[j].events.onInputDown.add(goInScenes, {valj:j});
       j++
   }
 
@@ -333,17 +398,29 @@ function outhover () {
   locc[this.valj].loadTexture()
   locc[this.valj].loadTexture(loc[this.vali])
 }
-function inScenes () {
-  
-  scene.loadTexture(scenes[this.valj])
+
+function goInScenes(){
+  playerInfo.heroState.locate = scenes[this.valj] //scene
+  playerInfo.from = 'scene'
+  if(check == 0){
+    Client.sendUpdateInfo()
+    check = 1
+  }
+  inScenes(this.valj)
+}
+
+function inScenes (val) {
+
+  scene.loadTexture(scenes[val])
   map.loadTexture()
-  textScene.text = scenes[this.valj]
+  textScene.text = scenes[val]
   textScene.anchor.setTo(0.5,0)
 
   for(let i = 0 ; i <5; i++ ){
     locc[i].kill()
     locc[i].loadTexture()
   }
+
   search.loadTexture('walk_button')
   search.scale.setTo(0.8,0.8)
   search.anchor.setTo(-5.3,-2.2)
@@ -382,4 +459,8 @@ function inScenes () {
 
 function shake() {
   game.plugins.screenShake.shake(30);
+  playerInfo.heroState.search = 1
+  Client.sendUpdateInfo()
+  playerInfo.heroState.search = 0
 }
+
