@@ -366,7 +366,7 @@ function startGame () {
   hpFrame.loadTexture()
   text3.text = ""
   textScene.text = ''
-  textHP.text = ''
+  textHP.visible = false
 
   var j = 0
   for(let i = 0; i < 10 ; i+=2){
@@ -465,6 +465,7 @@ function inScenes (val) {
   hpFrame.position.x = skill.width * 1.5
   hpFrame.position.y = height  - skill.height * 1.3
 
+  textHP.visible = true
   textHP.text = playerInfo.heroState.hp
   textHP.position.x = skill.width*1.5
   textHP.position.y = hpFrame.position.y - textHP.height
