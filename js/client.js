@@ -40,6 +40,7 @@ Client.sendUpdateInfo = function(){
 Client.socket.on('updateResult', function(data){
   //console.log(JSON.stringify(data))
   playerInfo.heroState.hp = data[playerInfo.username].heroState.hp
+  textHP.text = playerInfo.heroState.hp
   console.log(j++ + 'result = ' + JSON.stringify(playerInfo))
 })
 

@@ -22,6 +22,7 @@ var ninja
 var sniper
 var swordman
 var text3
+var textHP
 
 //info
 var playerInfo = {
@@ -338,7 +339,7 @@ function startGameInit(){
   hp = game.add.sprite(0,0)
   skill = game.add.sprite(0,0)
   hpFrame = game.add.sprite(0,0)
-
+  textHP = game.add.text(0,0,'',style)
   startGame()
 }
 
@@ -365,6 +366,7 @@ function startGame () {
   hpFrame.loadTexture()
   text3.text = ""
   textScene.text = ''
+  textHP.text = ''
 
   var j = 0
   for(let i = 0; i < 10 ; i+=2){
@@ -408,7 +410,6 @@ function goInScenes(){
   }
   inScenes(this.valj)
 }
-
 function inScenes (val) {
 
   scene.loadTexture(scenes[val])
@@ -423,14 +424,20 @@ function inScenes (val) {
 
   search.loadTexture('walk_button')
   search.scale.setTo(0.8,0.8)
-  search.anchor.setTo(-5.3,-2.2)
+  search.position.x = width-search.width
+  search.position.y = height-search.height
+
+  //search.anchor.setTo(-5.3,-2.2)
   search.inputEnabled = true
   search.events.onInputDown.add(shake);
   
 
   fight.loadTexture("attack_button")
   fight.scale.setTo(0.8,0.8)
-  fight.anchor.setTo(-6.5,-4)
+//  fight.anchor.setTo(-6.5,-4)
+  fight.position.x = width-search.width-fight.width-20
+  fight.position.y = height-search.height
+
 
   text3.text = 'BACK'
   text3.inputEnabled = true
@@ -438,7 +445,9 @@ function inScenes (val) {
 
   hero.loadTexture(playerInfo.heroChoose)
   hero.scale.setTo(0.7,0.7)
-  hero.anchor.setTo(0,-0.3)
+  //hero.anchor.setTo(0,-0.3)
+  hero.position.x = 100 
+  hero.position.y = height/3
   
   //skill.loadTexture(playerInfo.heroChoose +"_skill_icon")
   skill.loadTexture("ninja_skill_icon")
@@ -455,6 +464,10 @@ function inScenes (val) {
   hpFrame.scale.setTo(0.8,0.8)
   hpFrame.position.x = skill.width * 1.5
   hpFrame.position.y = height  - skill.height * 1.3
+
+  textHP.text = playerInfo.heroState.hp
+  textHP.position.x = skill.width*1.5
+  textHP.position.y = hpFrame.position.y - textHP.height
 }
 
 function shake() {
