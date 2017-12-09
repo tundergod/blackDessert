@@ -227,7 +227,7 @@ Game.update = function () {
 }
 
 Game.render = function () {
-  game.debug.inputInfo(16, 16)
+  //game.debug.inputInfo(16, 16)
 }
 
 function chooseHero () {
