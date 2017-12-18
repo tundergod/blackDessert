@@ -19,85 +19,122 @@ server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
 })
 
+
+/*
+TODO:
+1.把沒有用的socket關掉，避免浪費資源
+2.把已經不在的player的資料去除
+*/
+
+
 // 有新的client連接就會進入connection的callback function，傳入一個socket，可以利用這個socket跟client溝通
 io.on('connection', function (socket) {
 
   // socket.on 監聽
-  socket.on('newplayer', function () {
-
-    socket.player = {
-      id: server.lastPlayerID++
-    }
+  socket.on('newplayer', function (info) {
     console.log('A player is logging in ')
 
-    // socket.emit server <--> client
-    socket.emit('allplayers', getAllPlayers())
+    // give player an id (15 random char)
+    var id = makeID()
+    allPlayerInfo.hall.push(info)
+    info.userid = id
+    socket.emit('askplayerID',info)
 
-    //give player an id -> client
-    socket.emit('askplayerID', socket.player.id)
-
-    // 對所有socket(除了自己)傳訊息，公告有玩家進入地圖
-    socket.broadcast.emit('newplayers', socket.player)
-
-    //update info
+    // listen update info
     socket.on('updateInfo',function(data){
-      console.log('update = ' + JSON.stringify(data) + '\n')
+      //console.log('update = ' + JSON.stringify(data) + '\n')
 
-      //send newest data to all client
+      // send newest data to all client
       io.sockets.emit('updateResult', processUpdateInfo(data))
     })
-
-    // 監聽disconnect事件
-    socket.on('disconnect', function () {
-      // 對所有client傳訊息
-      io.emit('remove', socket.player.id)
-    })
-
   })
 })
 
-function getAllPlayers () {
-  var players = []
-  Object.keys(io.sockets.connected).forEach(function (socketID) {
-    var player = io.sockets.connected[socketID].player
-    if (player) players.push(player)
-  })
-  return players
+var allPlayerInfo = {
+  "hall":[],
+  "room":[]
 }
 
-var allPlayerInfo = []
-var gameInfo = {
-  "playerAlive":"",
-  "playerLocate":{
-    "map":"",
-    "castle":"",
-    "forest":"",
-    "lake":"",
-    "town":"",
-    "cave":""
+function makeID(){
+  var id = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+  for(let i = 0; i < 15; i++){
+    id += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  return id
+}
+
+function searchIndex(id){
+  for(let i = 0; i < allPlayerInfo.hall.length; i++){
+    if(allPlayerInfo.hall[i].userid === id){
+      return i
+    }
   }
 }
 
 function processUpdateInfo(data){
+  var searched = []
+  var n = searchIndex(data.userid)
+  console.log("n=" + n)
+  var enermy
 
-  // if add new player else update
-  if(data.playerState == 0){
-    allPlayerInfo[allPlayerInfo.length] = data
-  }
-  else{
-    allPlayerInfo[data.username] = data
-  }
+/*同步*/
+allPlayerInfo.hall[n] = data
+
+/*SEARCH******************************************************/
 
   // when player search
-  if(data.heroState.search == 1){
-    for(let i = 0; i < allPlayerInfo.length ; i++){
-      if(i != data.username && allPlayerInfo[i].heroState.locate == data.heroState.locate){
-        allPlayerInfo[i].heroState.hp = allPlayerInfo[i].heroState.hp - 10
-        console.log(allPlayerInfo[i].heroState.hp)
+  if(data.heroState.search === 1){
+    // search all player, push to searched
+    for(let i = 0; i < allPlayerInfo.hall.length ; i++){
+      if( allPlayerInfo.hall[i].userid != data.userid && allPlayerInfo.hall[i].heroState.locate === data.heroState.locate){
+        searched.push(allPlayerInfo.hall[i].userid)
       }
     }
+
+    // find out which player searched
+    if(searched.length > 0){
+      // random probability, 80% search enermy , 20% search treasure
+      // 1 - 10 , if 1~8=enermy
+      var random = Math.floor((Math.random() * 10) + 1)
+      console.log('random = ' + random)
+      if(random < 9){
+        //choose an enermy
+        enermy = searched[Math.floor((Math.random() * searched.length))]
+        console.log('enermy id = ' + enermy)
+
+        //change info, player who search and searched
+        allPlayerInfo.hall[n].heroState.searched.enermy = enermy
+      }
+      else{
+        allPlayerInfo.hall[n].heroState.searched.enermy = "0"
+      }
+    }
+
+    console.log("searched = " + searched)
   }
 
-  console.log('all = ' + JSON.stringify(allPlayerInfo) + '\n')
+
+/*FIGHT***********************************************************/
+
+  if(data.heroState.searched.fight === 1){
+    var z = searchIndex(data.heroState.searched.enermy)
+    allPlayerInfo.hall[z].heroState.hp =  allPlayerInfo.hall[z].heroState.hp - 10
+    allPlayerInfo.hall[n].heroState.searched.enermy = "0"
+    allPlayerInfo.hall[n].heroState.searched.fight = 0
+  }
+
+/******************************************************************/
+
+  console.log("--------------All player info-------------")
+
+  for(let i = 0 ; i < allPlayerInfo.hall.length; i++){
+    console.log(JSON.stringify(allPlayerInfo.hall[i]))
+  }
+  console.log("------------------------------------------\n")
+
+  allPlayerInfo.hall[n].heroState.search = 0
   return allPlayerInfo
 }

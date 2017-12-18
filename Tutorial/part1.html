@@ -4,6 +4,8 @@
 	<meta charset="UTF-8" />
 	<title>Phaser - Making your first game, part 1</title>
 	<script type="text/javascript" src="js/phaser.min.js"></script>
+  <script src="https://cdn.bootcss.com/CanvasInput/1.2.7/CanvasInput.min.js"></script>
+  <script src="https://cdn.bootcss.com/CanvasInput/1.2.7/CanvasInput.js"></script>
     <style type="text/css">
         body {
             margin: 0;
@@ -20,11 +22,41 @@ function preload() {
 }
 
 function create() {
+
+  this.myInput = input(this.game.world.centerX, 50);
+  this.myInput.anchor.set(0.5);
+  this.myInput.canvasInput.value('Esto es la verga! :D');
+  this.myInput.canvasInput.focus();
+
+}
+
+function input(x,y){
+  var bmd = this.add.bitmapData(400,50)
+  var myinput = this.game.add.sprite(x,y,bmd)
+  var canvasinput = new CanvasInput({
+      canvas: bmd.canvas,
+      fontSize: 30,
+      fontFamily: 'Arial',
+      fontColor: '#212121',
+      fontWeight: 'bold',
+      width: 400,
+      padding: 8,
+      borderWidth: 1,
+      borderColor: '#000',
+      borderRadius: 3,
+      boxShadow: '1px 1px 0px #fff',
+      innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+      placeHolder: 'Enter message here...'
+  })
+  myInput.inputEnabled = true;
+  myInput.input.useHandCursor = true;
+  myInput.events.onInputUp.add(this.inputFocus, this);
+  return myInput;
+
 }
 
 function update() {
 }
-
 </script>
 
 </body>

@@ -26,23 +26,20 @@ var textHP
 
 //info
 var playerInfo = {
-  "username":"",
+  "userid":"",
   "playerState":"", //login=0,chooseHero=1,inGame=2
   "heroChoose":"",
   "heroState":{
     "hp":"100", // maximum=100 <--- minimum=0
-    "skill":"", // false=0,true=1
     "state":"", // fighting=2,searching=1,nothing=0
     "locate":"", // map=0,castle=1,forest=2,lake=3,t  own=4,cave=5
     "search":"", // no=0 , yes=1
-    "equiment":{
-      "weapon":"",
-      "armor":""
-    },
-    "material":"",
-    "from":""
+    "searched":{
+      "enermy":"0",
+      "fight":""
+    }
   }
-}
+
 
 // background
 var bg
@@ -77,41 +74,6 @@ var scenes = [
   "town",
   "cave"
 ]
-
-// canvas input for login - username and password
-var input1 = new CanvasInput({
-  canvas: document.getElementById('username'),
-  fontSize: 16,
-  fontFamily: 'Arial',
-  fontColor: '#212121',
-  fontWeight: 'bold',
-  width: 150,
-  height: 30,
-  padding: 8,
-  borderWidth: 1,
-  borderColor: '#000',
-  borderRadius: 3,
-  boxShadow: '1px 1px 0px #fff',
-  innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-  placeHolder: 'your username'
-})
-
-var input2 = new CanvasInput({
-  canvas: document.getElementById('password'),
-  fontSize: 16,
-  fontFamily: 'Arial',
-  fontColor: '#212121',
-  fontWeight: 'bold',
-  width: 150,
-  height: 30,
-  padding: 8,
-  borderWidth: 1,
-  borderColor: '#000',
-  borderRadius: 3,
-  boxShadow: '1px 1px 0px #fff',
-  innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-  placeHolder: 'your password'
-})
 
 Game.init = function () {
   game.stage.disableVisibilityChange = true
@@ -177,7 +139,7 @@ Game.create = function () {
   playerInfo.playerState = 0 //login
   playerInfo.from = 'create'
   Client.askNewPlayer()
-  Client.sendUpdateInfo()
+  //Client.sendUpdateInfo()
 /***************************************************************/
 
   // add screen shake plugin
@@ -199,7 +161,8 @@ Game.create = function () {
 
   // title clickable -> choose hero
   title.inputEnabled = true
-  title.events.onInputDown.add(chooseHero)
+//  title.events.onInputDown.add(chooseHero)
+  title.events.onInputUp.add(chooseHero)
 
   // start game button(press to start)
   // animation -> blink
@@ -208,6 +171,7 @@ Game.create = function () {
   startButton.anchor.setTo(0.5, -4.0)
   startButton.alpha = 0
   game.add.tween(startButton).to( { alpha: 1 }, 1500, Phaser.Easing.Linear.None, true, 0, 1000, true);
+
 }
 
 Game.update = function () {
@@ -339,7 +303,8 @@ function startGameInit(){
   hp = game.add.sprite(0,0)
   skill = game.add.sprite(0,0)
   hpFrame = game.add.sprite(0,0)
-  textHP = game.add.text(0,0,'',style)
+  textHP = game.add.text(0,0,'100',style)
+  textHP.visible = false
   startGame()
 }
 
@@ -366,7 +331,6 @@ function startGame () {
   hpFrame.loadTexture()
   text3.text = ""
   textScene.text = ''
-  textHP.visible = false
 
   var j = 0
   for(let i = 0; i < 10 ; i+=2){
@@ -434,10 +398,11 @@ function inScenes (val) {
 
   fight.loadTexture("attack_button")
   fight.scale.setTo(0.8,0.8)
-//  fight.anchor.setTo(-6.5,-4)
   fight.position.x = width-search.width-fight.width-20
   fight.position.y = height-search.height
-
+  fight.inputEnabled = true
+  fight.events.onInputDown.add(goFight)
+  fight.visible = false;
 
   text3.text = 'BACK'
   text3.inputEnabled = true
@@ -466,7 +431,7 @@ function inScenes (val) {
   hpFrame.position.y = height  - skill.height * 1.3
 
   textHP.visible = true
-  textHP.text = playerInfo.heroState.hp
+  textHP.visible = true
   textHP.position.x = skill.width*1.5
   textHP.position.y = hpFrame.position.y - textHP.height
 }
@@ -475,6 +440,10 @@ function shake() {
   game.plugins.screenShake.shake(30);
   playerInfo.heroState.search = 1
   Client.sendUpdateInfo()
-  playerInfo.heroState.search = 0
 }
 
+function goFight(){
+  playerInfo.heroState.searched.fight = 1
+  Client.sendUpdateInfo()
+  fight.visible = false
+}
