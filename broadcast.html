@@ -38,15 +38,15 @@ function create() {
 
 function add(){
   content = "號外~號外~ " + i;
-  text[i] = game.add.text(250, 16, con, {fill: '#ffffff'});
+  text[i] = game.add.text(250, 16, content, {fill: '#ffffff'});
   text[i].visible = false;
   i++;
   game.time.events.repeat(5, 10, moveDown, this, i-1);
-  game.time.events.add(120, topText, this, i-1, content);
+  game.time.events.add(120, topText, this, i-1);
   game.time.events.add(2000, kill, this, i-1);
 }
 
-function topText(t, con){
+function topText(t){
   text[t].visible = true;
 }
 
