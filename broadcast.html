@@ -1,0 +1,69 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>Broadcast</title>
+	<script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+var text = [];
+var content;
+var btn;
+var i=1;
+var count=1;
+
+function preload() {
+  game.load.image('sky', 'Tutorial/assets/sky.png');
+
+}
+
+function create() {
+  //for(var j=0; j<50; j++)
+  //  text[j]='';
+  var image = game.add.sprite(0,0,'sky');
+  //text[i] = game.add.text(250, 16, '', {fill: '#ffffff'});
+  btn = game.add.text(700, 500, "click", {fill: '#ff0000'});
+  btn.inputEnabled = true;
+  btn.events.onInputUp.add(add, this);
+}
+
+function add(){
+  content = "號外~號外~ " + i;
+  text[i] = game.add.text(250, 16, con, {fill: '#ffffff'});
+  text[i].visible = false;
+  i++;
+  game.time.events.repeat(5, 10, moveDown, this, i-1);
+  game.time.events.add(120, topText, this, i-1, content);
+  game.time.events.add(2000, kill, this, i-1);
+}
+
+function topText(t, con){
+  text[t].visible = true;
+}
+
+function kill(k){
+  text[k].text = '';
+}
+
+function moveDown(m){
+  temp = m;
+  for(m-=1; m>=1 && m>=temp-2; m--){
+    text[m].visible = true;
+    text[m].y+=3;
+  }
+  if(temp-3>=1)
+    text[temp-3].text = '';
+}
+</script>
+
+</body>
+</html>
