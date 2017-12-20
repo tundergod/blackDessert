@@ -22,13 +22,6 @@ bootState.create = function () {
   Client.askNewPlayer()
 
   /********************************/
-
-
-  bootState.bg = bootState.add.sprite(0,0,'title') 
-  bootState.bg.scale.setTo(scaleX, scaleY)
-  bootState.bg.alpha = 0
-  bootState.add.tween(bootState.bg).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
-
   console.log('----bootState----') 
-  game.state.start('loaderState')
+  game.state.start('loaderState', false, false)
 }

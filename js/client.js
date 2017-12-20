@@ -26,7 +26,7 @@ Client.socket.on('updateResult', function (data) {
 
   // textHP havent create before state = 2
   if (playerInfo.playerState === 2) {
-    textHP.text = playerInfo.heroState.hp
+    //textHP.text = playerInfo.heroState.hp
   }
 
   /* FIGHT */

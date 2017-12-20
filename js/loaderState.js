@@ -1,12 +1,9 @@
 var loaderState = {}
 
 loaderState.init = function(){
-/* 
-TODO: loading bar for all preload sources
-references:
-https://phaser.io/examples/v2/loader/load-events
-https://github.com/terebentina/VisualTimer
-*/
+  var style = { font: "32px Arial", fill: "white", wordWrap: false, align: "center" }; 
+  loaderState.progressText = game.add.text(game.world.centerX,game.world.centerY + 100,'Loading 0%', style);
+  loaderState.progressText.anchor.setTo(0.5,-0.3);
 }
 
 loaderState.preload = function(){
@@ -63,6 +60,13 @@ loaderState.preload = function(){
   game.load.image('black','../assets/black.jpg')
   game.load.spritesheet('kaboom','../assets/explode.png', 128,128)
 
+  game.load.onFileComplete.add(function(progress){
+    loaderState.progressText.text = 'loading ' + progress + '%';
+    if(progress === 100){
+      loaderState.progressText.text = ''
+    }
+  });
+
   game.load.start();
 }
 
@@ -84,7 +88,6 @@ loaderState.create = function(){
   loaderState.add.tween(loaderState.bg).to({ alpha: 1 }, 2000, Phaser.Easing.Linear.None, true)
   loaderState.bg.inputEnabled = true
   loaderState.bg.events.onInputUp.add(loaderState.nextState)
-
 
   loaderState.start = loaderState.add.sprite(game.world.centerX, game.world.centerY, 'pressStart');
   loaderState.start.scale.setTo(scaleX,scaleY)

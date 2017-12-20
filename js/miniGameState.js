@@ -1,6 +1,6 @@
 var miniGameState = {}
 
-var numButton = 10
+var numButton = 30
 miniGameState.count = 0
 miniGameState.button = []
 miniGameState.score = 0
@@ -25,7 +25,7 @@ miniGameState.create = function(){
   miniGameState.add.tween(miniGameState.bg).to({ alpha: 0.99 }, 0, Phaser.Easing.Linear.None, true)
 
   miniGameState.physics.startSystem(Phaser.Physics.ARCADE)
-  miniGameState.physics.arcade.gravity.y = 300
+  miniGameState.physics.arcade.gravity.y = 1000
   miniGameState.time.events.repeat(Phaser.Timer.SECOND * 0.5, numButton, miniGameState.createButton)
 
   miniGameState.scoreText = miniGameState.add.text(10, 10, miniGameState.score, style)
@@ -44,7 +44,7 @@ miniGameState.createButton = function(){
   4,結束條件
   */
   miniGameState.random = Math.floor((Math.random() * 4))
-  miniGameState.button[miniGameState.count] = miniGameState.add.sprite(0, -100, 'head1')
+  miniGameState.button[miniGameState.count] = miniGameState.add.sprite(0, -200, 'head1')
   miniGameState.button[miniGameState.count].scale.setTo(0.3, 0.3)
   miniGameState.button[miniGameState.count].position.x = game.world.centerX - (miniGameState.button[miniGameState.count].width*2 - 10*2) + (miniGameState.button[miniGameState.count].width * miniGameState.random + 10 * miniGameState.random)
   miniGameState.physics.enable(miniGameState.button, Phaser.Physics.ARCADE)
