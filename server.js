@@ -29,18 +29,16 @@ TODO:
 io.on('connection', function (socket) {
   // socket.on 監聽
   socket.on('newplayer', function (info) {
-    console.log('A player is logging in ')
 
     // give player an id (15 random char)
     var id = makeID()
+    console.log('A player is connecting......' + ' player ID = ' + id)
+    info.userID = id
     allPlayerInfo.hall.push(info)
-    info.userid = id
     socket.emit('askplayerID', info)
 
     // listen update info
     socket.on('updateInfo', function (data) {
-      // console.log('update = ' + JSON.stringify(data) + '\n')
-
       // send newest data to all client
       io.sockets.emit('updateResult', processUpdateInfo(data))
     })
@@ -63,18 +61,20 @@ function makeID () {
   return id
 }
 
-function searchIndex (id) {
+function ssearchIndex (id) {
   for (let i = 0; i < allPlayerInfo.hall.length; i++) {
-    if (allPlayerInfo.hall[i].userid === id) {
+    console.log('check'+i)
+    if (allPlayerInfo.hall[i].userID === id) {
       return i
     }
   }
+  return -1
 }
 
 function processUpdateInfo (data) {
   var searched = []
-  var n = searchIndex(data.userid)
-  console.log('n=' + n)
+  var n = ssearchIndex(data.userID)
+  console.log(n)
   var enermy
 
 /* 同步 */
@@ -86,8 +86,8 @@ function processUpdateInfo (data) {
   if (data.heroState.search === 1) {
     // search all player, push to searched
     for (let i = 0; i < allPlayerInfo.hall.length; i++) {
-      if (allPlayerInfo.hall[i].userid != data.userid && allPlayerInfo.hall[i].heroState.locate === data.heroState.locate) {
-        searched.push(allPlayerInfo.hall[i].userid)
+      if (allPlayerInfo.hall[i].userID != data.userID && allPlayerInfo.hall[i].heroState.locate === data.heroState.locate) {
+        searched.push(allPlayerInfo.hall[i].userID)
       }
     }
 
@@ -115,21 +115,24 @@ function processUpdateInfo (data) {
 /* FIGHT***********************************************************/
 
   if (data.heroState.searched.fight === 1) {
-    var z = searchIndex(data.heroState.searched.enermy)
+    var z = ssearchIndex(data.heroState.searched.enermy)
     allPlayerInfo.hall[z].heroState.hp = allPlayerInfo.hall[z].heroState.hp - 10
     allPlayerInfo.hall[n].heroState.searched.enermy = '0'
     allPlayerInfo.hall[n].heroState.searched.fight = 0
   }
+  //allPlayerInfo.hall[n].heroState.search = 0
+  showAll(n)
+  return allPlayerInfo
+}
 
-/******************************************************************/
-
+function showAll(n){
   console.log('--------------All player info-------------')
+
+  allPlayerInfo.hall[n].heroState.search = 0
 
   for (let i = 0; i < allPlayerInfo.hall.length; i++) {
     console.log(JSON.stringify(allPlayerInfo.hall[i]))
   }
   console.log('------------------------------------------\n')
-
-  allPlayerInfo.hall[n].heroState.search = 0
-  return allPlayerInfo
+  
 }

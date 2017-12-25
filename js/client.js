@@ -11,33 +11,44 @@ Client.askNewPlayer = function () {
 
 // 2.接收確認與ID
 Client.socket.on('askplayerID', function (data) {
-  console.log('Your ID is ' + data.userid)
+  console.log('Your ID is ' + data.userID)
   playerInfo = data
+  console.log(playerInfo)
 })
 
 // 傳送操作資訊給服務器
 Client.sendUpdateInfo = function () {
   Client.socket.emit('updateInfo', playerInfo)
+  console.log(playerInfo)
 }
 
 Client.socket.on('updateResult', function (data) {
-  var n = searchIndex(data, playerInfo.userid)
+  var n = searchIndex(data, playerInfo.userID)
   playerInfo = data.hall[n]
 
-  // textHP havent create before state = 2
-  if (playerInfo.playerState === 2) {
-    //textHP.text = playerInfo.heroState.hp
+  if(typeof(sceneState.hpText) != "undefined"){
+    sceneState.hpText = playerInfo.heroState.hp
   }
 
   /* FIGHT */
   if (playerInfo.heroState.searched.enermy != '0') {
-    fight.visible = true
+    console.log("search an enermy!")  
   }
+
+  if(playerInfo.heroState.searched.fighted === 1){
+    console.log("been attacked!!!!!!!!")
+    game.state.start('miniGameState')
+  }
+
+  if(playerInfo.heroState.hp < 0){
+    game.state.start('gameOverState')
+  }
+
 })
 
 function searchIndex (data, id) {
   for (let i = 0; i < data.hall.length; i++) {
-    if (data.hall[i].userid === id) {
+    if (data.hall[i].userID === id) {
       return i
     }
   }

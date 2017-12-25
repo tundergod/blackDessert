@@ -1,4 +1,5 @@
 var chooseState = {}
+//var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
 
 chooseState.count = 0
 chooseState.head = []
@@ -9,7 +10,7 @@ chooseState.create = function () {
 
 /*****send message to server*****/
 
-    playerInfo.playerState = 4
+    playerInfo.playerState = state[4]
     Client.sendUpdateInfo()
 
 /********************************/
@@ -44,7 +45,6 @@ chooseState.create = function () {
   chooseState.stage.backgroundColor = '#000000'
   chooseState.physics.startSystem(Phaser.Physics.ARCADE)
   chooseState.physics.arcade.gravity.y = 150
-  //chooseState.physics.arcade.gravity.x = 20
   chooseState.time.events.repeat(Phaser.Timer.SECOND * 0.5, 10, chooseState.createHeroHead)
 }
 
@@ -67,11 +67,14 @@ chooseState.heroInfo = function(){
   2.把hero的名字放進框框(用chooseState.heroName.text = '')
   3.把10個hero的圖片加進去
   */
-  chooseState.titleName.text = 'HERO ' + this.n
+  chooseState.titleName.text = hero[this.n]
   chooseState.button.inputEnabled = true
-  chooseState.button.events.onInputDown.add(chooseState.nextState,)
+  chooseState.button.events.onInputDown.add(chooseState.nextState, {n : this.n})
 }
 
 chooseState.nextState = function(){
-  game.state.start('mapState')
+  playerInfo.heroChoose = hero[this.n]
+  playerInfo.heroState.hp = 100
+  chooseState.timeStart = new Date()
+  game.state.start('mapState', true, false)
 }

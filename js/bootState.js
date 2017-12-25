@@ -18,7 +18,7 @@ bootState.create = function () {
 
   /*****send message to server*****/
 
-  playerInfo.playerState = 0
+  playerInfo.playerState = state[0]
   Client.askNewPlayer()
 
   /********************************/

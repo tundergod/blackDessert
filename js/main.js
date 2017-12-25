@@ -22,7 +22,9 @@ game.state.add('gameOverState', gameOverState)
 // global variable define
 var heroNum = 10
 var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave']
-var hero = []
+var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
+var state = ['bootState', 'loaderState', 'loginState', 'searchState', 'chooseState', 'mapState', 'sceneState', 'miniGameState', 'gameOverState']
+
 /*
 playerState:
   1.bootState
@@ -40,15 +42,35 @@ var playerInfo = {
   "playerState":"", 
   "heroChoose":"",
   "heroState":{
-    "hp":"100", // maximum=100 <--- minimum=0
+    "hp":"", // maximum=100 <--- minimum=0
     "state":"", // fighting=2,searching=1,nothing=0
-    "locate":"", // map=0,castle=1,forest=2,lake=3,t  own=4,cave=5
-    "search":"", // no=0 , yes=1
+    "locate":"", // map=0, castle=1, forest=2, lake=3, town=4, cave=5
+    "search":"", // plyaer press search? no=0 , yes=1
     "searched":{
-      "enermy":"0",
-      "fight":""
+      "enermy":"0", //no enermy = 0, got enermy = enermy userID
+      "fight":"", //if searched an enermy, fight = 1
+      "fighted":"" //if someone searched player and fight him, = 1, else = 0
     }
   } 
+}
+
+startTimer = function(){
+  timerText = game.add.text(game.world.centerX, 10, '', {font: "32px Arial", fill: "#fff"})
+  timerText.anchor.setTo(0.5, 0)
+
+}
+
+var time, min, sec, result
+updateTimer =  function(){
+
+  var timeCurrent = new Date()
+  time = Math.round((timeCurrent.getTime() - chooseState.timeStart) / 1000);
+  min = Math.floor(time / 60)
+  sec = time % 60
+  result = (min < 10) ? "0" + min : min;
+  result += (sec < 10) ? ":0" + sec : ":" + sec;
+  return result
+//  timerText.text = result;
 }
 
 // game start

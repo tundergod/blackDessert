@@ -1,9 +1,11 @@
 var miniGameState = {}
 
-var numButton = 30
+var numButton = 40
+var numLine = 4
+
 miniGameState.count = 0
 miniGameState.button = []
-miniGameState.score = 0
+
 var style = {                                                                                                             
   font: '32px Arial',
   fill: '#ff0044',
@@ -18,20 +20,24 @@ miniGameState.init = function(data){
 miniGameState.create = function(){
 
   console.log('----miniGameState----') 
+  miniGameState.score = 0
 
   miniGameState.bg = miniGameState.add.sprite(0, 0, 'black')
   miniGameState.bg.scale.setTo(scaleX,scaleY)
   miniGameState.bg.alpha = 0
   miniGameState.add.tween(miniGameState.bg).to({ alpha: 0.99 }, 0, Phaser.Easing.Linear.None, true)
 
-  miniGameState.physics.startSystem(Phaser.Physics.ARCADE)
-  miniGameState.physics.arcade.gravity.y = 1000
-  miniGameState.time.events.repeat(Phaser.Timer.SECOND * 0.5, numButton, miniGameState.createButton)
+  miniGameState.scoreText = miniGameState.add.text(10, 10, '0', style)
 
-  miniGameState.scoreText = miniGameState.add.text(10, 10, miniGameState.score, style)
-  miniGameState.backText = miniGameState.add.text(width-100, 10, 'BACK', style)
-  miniGameState.backText.inputEnabled = true
-  miniGameState.backText.events.onInputDown.add(miniGameState.backState)
+  miniGameState.physics.startSystem(Phaser.Physics.ARCADE)
+  miniGameState.physics.arcade.gravity.y = 500
+  miniGameState.time.events.repeat(Phaser.Timer.SECOND * 0.2, numButton, miniGameState.createButton)
+
+  miniGameState.backButton = sceneState.add.sprite(0,0,'exitButton')                                                         
+  miniGameState.backButton.scale.setTo(scaleX,scaleY)
+  miniGameState.backButton.anchor.setTo(-22.5,-0.2)
+  miniGameState.backButton.inputEnabled = true
+  miniGameState.backButton.events.onInputDown.add(miniGameState.backState)
 }
 
 miniGameState.createButton = function(){
@@ -43,10 +49,10 @@ miniGameState.createButton = function(){
   3.遊戲離開button
   4,結束條件
   */
-  miniGameState.random = Math.floor((Math.random() * 4))
-  miniGameState.button[miniGameState.count] = miniGameState.add.sprite(0, -200, 'head1')
-  miniGameState.button[miniGameState.count].scale.setTo(0.3, 0.3)
-  miniGameState.button[miniGameState.count].position.x = game.world.centerX - (miniGameState.button[miniGameState.count].width*2 - 10*2) + (miniGameState.button[miniGameState.count].width * miniGameState.random + 10 * miniGameState.random)
+  miniGameState.random = Math.floor((Math.random() * numLine))
+  miniGameState.button[miniGameState.count] = miniGameState.add.sprite(0, -100, 'head1')
+  miniGameState.button[miniGameState.count].scale.setTo(0.2, 0.2)
+  miniGameState.button[miniGameState.count].position.x = game.world.centerX - (miniGameState.button[miniGameState.count].width * (numLine / 2) - 10 * (numLine / 2)) + (miniGameState.button[miniGameState.count].width * miniGameState.random + 10 * miniGameState.random)
   miniGameState.physics.enable(miniGameState.button, Phaser.Physics.ARCADE)
   miniGameState.button[miniGameState.count].body.bounce.y = 0.9
   miniGameState.button[miniGameState.count].inputEnabled = true
@@ -59,7 +65,7 @@ miniGameState.boom = function(){
   console.log('hit!')
   var boom = miniGameState.add.sprite(miniGameState.button[this.n].position.x, miniGameState.button[this.n].position.y, 'kaboom');
   var booom = boom.animations.add('booooom');
-  boom.animations.play('booooom', 50, false, true);
+  boom.animations.play('booooom', 80, false, true);
   miniGameState.button[this.n].kill()
   miniGameState.score = miniGameState.score + 10
   miniGameState.scoreText.text = miniGameState.score
