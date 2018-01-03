@@ -16,8 +16,12 @@
     "url": "https://github.com/tundergod/blackDessert/issues"
   },
   "homepage": "https://github.com/tundergod/blackDessert#readme",
-  "dependencies": {},
+  "dependencies": {
+    "mysql": "github:mysqljs/mysql"
+  },
   "devDependencies": {
+    "@orange-games/phaser-input": "^2.0.5",
+    "browserify": "^14.5.0",
     "express": "^4.16.2",
     "phaser-input": "^1.2.6",
     "socket.io": "^2.0.4",

@@ -9,6 +9,16 @@ Client.askNewPlayer = function () {
   Client.socket.emit('newplayer', playerInfo)
 }
 
+// 1-1. 送玩家輸入的帳號密碼去伺服器
+Client.loginAcc = function(){
+  Client.socket.emit('accInfoSocket', accInfo)
+}
+
+// 1-2. 確認帳號對不對
+Client.socket.on('loginStateConfirmSocket', function(data){
+  playerInfo.userName = data;
+})
+
 // 2.接收確認與ID
 Client.socket.on('askplayerID', function (data) {
   console.log('Your ID is ' + data.userID)
@@ -29,7 +39,7 @@ Client.socket.on('updateResult', function (data) {
   if(typeof(sceneState.hpText) != "undefined"){
     sceneState.hpText = playerInfo.heroState.hp
   }
-
+  
   /* FIGHT */
   if (playerInfo.heroState.searched.enermy != '0') {
     console.log("search an enermy!")  

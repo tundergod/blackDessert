@@ -435,7 +435,6 @@ function inScenes (val) {
   textHP.position.x = skill.width*1.5
   textHP.position.y = hpFrame.position.y - textHP.height
 }
-
 function shake() {
   game.plugins.screenShake.shake(30);
   playerInfo.heroState.search = 1

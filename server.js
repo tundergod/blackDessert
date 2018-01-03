@@ -3,17 +3,31 @@ var app = express()
 var server = require('http').Server(app)
 var io = require('socket.io').listen(server)
 
+var mysql = require('mysql');                                                                                      
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "wp2017_groupj",
+  password: "groupj",
+  database: "wp2017_groupj"
+});
+con.connect(function(err){
+  if(err) throw err;
+  console.log("Connected!");
+});
+
+
+
 app.use('/css', express.static(__dirname + '/css'))
 app.use('/js', express.static(__dirname + '/js'))
 app.use('/assets', express.static(__dirname + '/assets'))
 app.use('/public', express.static(__dirname + '/public'))
-
+app.use('/node_modules', express.static(__dirname + '/node_modules'))
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html')
 })
 
 server.lastPlayerID = 0
-var port = 9876
+var port = 7778
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
@@ -28,12 +42,32 @@ TODO:
 // 有新的client連接就會進入connection的callback function，傳入一個socket，可以利用這個socket跟client溝通
 io.on('connection', function (socket) {
   // socket.on 監聽
+  var userName;
   socket.on('newplayer', function (info) {
-
+    // listen使用者登入資訊
+    console.log("lalala" + JSON.stringify(info))
+    socket.on('accInfoSocket', function(accInfo){
+      //console.log('Username from socket = ' + accInfo[0])
+      //console.log('Password from socket = ' + accInfo[1])
+      con.query("SELECT * FROM user_info", function (err, result, fields) {
+        if (err) throw err;
+        for (var i in result){
+          //console.log('username from table = ' + result[i].username);
+          //console.log('password from table = ' + result[i].pass);
+          if(accInfo[0] == result[i].username && accInfo[1] == result[i].pass){
+            console.log('User found!');
+            userName = accInfo[0];
+            break;
+          }
+        }
+      });
+      socket.emit('loginStateConfirmSocket', userName);
+    })
     // give player an id (15 random char)
     var id = makeID()
     console.log('A player is connecting......' + ' player ID = ' + id)
     info.userID = id
+    info.userName = userName
     allPlayerInfo.hall.push(info)
     socket.emit('askplayerID', info)
 
@@ -42,6 +76,7 @@ io.on('connection', function (socket) {
       // send newest data to all client
       io.sockets.emit('updateResult', processUpdateInfo(data))
     })
+
   })
 })
 

@@ -1,6 +1,6 @@
 var width = $(window).width() * 0.9
 var height = $(window).height() * 0.9
-var game = new Phaser.Game(width, height, Phaser.AUTO, document.getElementById('game'), {})
+var game = new Phaser.Game(width, height, Phaser.CANVAS, document.getElementById('game'), {})
 
 // define screen scale
 var scaleX = width/1920
@@ -37,8 +37,9 @@ playerState:
   8.miniGameState
   9.gameOverState
 */
-var playerInfo = {                                                                                                        
+var playerInfo = {
   "userID":"",
+  "userName":"",
   "playerState":"", 
   "heroChoose":"",
   "heroState":{
