@@ -27,7 +27,7 @@ app.get('/', function (req, res) {
 })
 
 server.lastPlayerID = 0
-var port = 7778
+var port = 7777
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
@@ -58,6 +58,9 @@ io.on('connection', function (socket) {
             console.log('User found!');
             userName = accInfo[0];
             break;
+          }
+          else{
+            userName = "unable";
           }
         }
       });
@@ -151,7 +154,8 @@ function processUpdateInfo (data) {
 
   if (data.heroState.searched.fight === 1) {
     var z = ssearchIndex(data.heroState.searched.enermy)
-    allPlayerInfo.hall[z].heroState.hp = allPlayerInfo.hall[z].heroState.hp - 10
+    //allPlayerInfo.hall[z].heroState.hp = allPlayerInfo.hall[z].heroState.hp - 10
+    /////////////////////////////////////// above something wrong
     allPlayerInfo.hall[n].heroState.searched.enermy = '0'
     allPlayerInfo.hall[n].heroState.searched.fight = 0
   }

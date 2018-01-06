@@ -82,5 +82,9 @@ loginState.checkLogin = function(){
   loginState.loginGame();
 }
 loginState.loginGame = function(){
-  game.state.start('searchState')
+  if(playerInfo.userName != "unable"){
+    //Client.sendUpdateInfo();
+    console.log(playerInfo.userName);
+    game.state.start('searchState')
+  }
 }

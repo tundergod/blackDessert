@@ -37,8 +37,9 @@ var playerInfo = {
     "searched":{
       "enermy":"0",
       "fight":""
-    }
-  }
+    },
+  "userName":""
+}
 
 
 // background

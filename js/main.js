@@ -66,7 +66,7 @@ updateTimer =  function(){
 
   var timeCurrent = new Date()
   time = Math.round((timeCurrent.getTime() - chooseState.timeStart) / 1000);
-  min = Math.floor(time / 60)
+  in = Math.floor(time / 60)
   sec = time % 60
   result = (min < 10) ? "0" + min : min;
   result += (sec < 10) ? ":0" + sec : ":" + sec;
