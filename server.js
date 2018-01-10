@@ -2,20 +2,19 @@ var express = require('express')
 var app = express()
 var server = require('http').Server(app)
 var io = require('socket.io').listen(server)
-
-var mysql = require('mysql');                                                                                      
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "wp2017_groupj",
-  password: "groupj",
-  database: "wp2017_groupj"
-});
-con.connect(function(err){
-  if(err) throw err;
-  console.log("Connected!");
-});
-
-
+function connectDatabase(mysql, con){
+  mysql = require('mysql');                                                                                      
+  con = mysql.createConnection({
+    host: "localhost",
+    user: "wp2017_groupj",
+    password: "groupj",
+    database: "wp2017_groupj"
+  });
+  con.connect(function(err){
+    if(err) throw err;
+    console.log("Connected!");
+  });
+}
 
 app.use('/css', express.static(__dirname + '/css'))
 app.use('/js', express.static(__dirname + '/js'))
@@ -45,6 +44,9 @@ io.on('connection', function (socket) {
   var userName;
   socket.on('newplayer', function (info) {
     // listen使用者登入資訊
+    var mysql;
+    var con;
+    connectDatabase(mysql, con);
     console.log("lalala" + JSON.stringify(info))
     socket.on('accInfoSocket', function(accInfo){
       //console.log('Username from socket = ' + accInfo[0])
@@ -65,12 +67,14 @@ io.on('connection', function (socket) {
         }
       });
       socket.emit('loginStateConfirmSocket', userName);
+      con.end()
     })
     // give player an id (15 random char)
     var id = makeID()
     console.log('A player is connecting......' + ' player ID = ' + id)
     info.userID = id
     info.userName = userName
+    console.log(JSON.stringify(info))
     allPlayerInfo.hall.push(info)
     socket.emit('askplayerID', info)
 
