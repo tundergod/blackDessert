@@ -60,7 +60,6 @@ startTimer = function(){
   timerText.anchor.setTo(0.5, 0)
 
 }
-
 var time, min, sec, result
 updateTimer =  function(){
 

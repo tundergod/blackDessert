@@ -2,7 +2,9 @@ var express = require('express')
 var app = express()
 var server = require('http').Server(app)
 var io = require('socket.io').listen(server)
-function connectDatabase(mysql, con){
+var mysql
+var con
+function mysqlConnect(){
   mysql = require('mysql');                                                                                      
   con = mysql.createConnection({
     host: "localhost",
@@ -15,6 +17,10 @@ function connectDatabase(mysql, con){
     console.log("Connected!");
   });
 }
+function mysqlDisconnect(){
+  con.end();
+}
+
 
 app.use('/css', express.static(__dirname + '/css'))
 app.use('/js', express.static(__dirname + '/js'))
@@ -41,17 +47,16 @@ TODO:
 // 有新的client連接就會進入connection的callback function，傳入一個socket，可以利用這個socket跟client溝通
 io.on('connection', function (socket) {
   // socket.on 監聽
-  var userName;
+  var userName = '';
   socket.on('newplayer', function (info) {
     // listen使用者登入資訊
-    var mysql;
-    var con;
-    connectDatabase(mysql, con);
     console.log("lalala" + JSON.stringify(info))
     socket.on('accInfoSocket', function(accInfo){
+      mysqlConnect();
       //console.log('Username from socket = ' + accInfo[0])
       //console.log('Password from socket = ' + accInfo[1])
-      con.query("SELECT * FROM user_info", function (err, result, fields) {
+      var id;
+      var query = con.query("SELECT * FROM user_info", function (err, result, fields) {
         if (err) throw err;
         for (var i in result){
           //console.log('username from table = ' + result[i].username);
@@ -59,24 +64,65 @@ io.on('connection', function (socket) {
           if(accInfo[0] == result[i].username && accInfo[1] == result[i].pass){
             console.log('User found!');
             userName = accInfo[0];
+            id = result[i].ID;
+            //console.log('here' + id)
+            info.userName = userName
+            //allPlayerInfo.hall.push(info)
             break;
           }
-          else{
-            userName = "unable";
+        }
+        info.userID = id
+        console.log('Debugger = ' + info.userName + ' ' + info.userID )
+        allPlayerInfo.hall.push(info)
+        console.log('A player is connecting......' + ' player ID = ' + id)
+        socket.emit('askplayerID', info)
+        socket.emit('loginStateConfirmSocket', info.userName)
+        //console.log(info)
+        //con.end()
+      });
+      mysqlDisconnect();
+    })
+    
+    socket.on('accRegisterSocket', function(accInfo){
+      mysqlConnect();
+      var temp = 1
+      var qString;
+      var query = con.query("SELECT * FROM user_info", function (err, result, fields){
+        if (err) throw err;
+        var repeat = 0;
+        for(var i in result){
+          if(accInfo[0] == result[i].username){
+            repeat = 1;
+            break;
           }
         }
+        if(repeat == 1){ //repeat username founded
+          console.log('register_repeat')
+          //socket.emit('registerDone', repeat);
+        }
+        else if(repeat == 0){ //no repeat
+          console.log('register_success')
+          var newID = makeID();
+          qString = "INSERT INTO user_info(username, pass, ID)";
+          qString += "VALUES ('" + accInfo[0] + "', '" + accInfo[1] + "', '" + newID + "');"
+          console.log('qString = ' + qString)
+          console.log(newID);
+          temp = 2
+          //socket.emit('registerDone', repeat);
+        }
       });
-      socket.emit('loginStateConfirmSocket', userName);
-      con.end()
-    })
+      //query = con.query(qString);
+      while(1){
+        console.log("while")
+        if(temp != 1){
+          console.log('start query')
+          con.query(qString)
+          break
+        }
+      }
+      mysqlDisconnect();
+    }); 
     // give player an id (15 random char)
-    var id = makeID()
-    console.log('A player is connecting......' + ' player ID = ' + id)
-    info.userID = id
-    info.userName = userName
-    console.log(JSON.stringify(info))
-    allPlayerInfo.hall.push(info)
-    socket.emit('askplayerID', info)
 
     // listen update info
     socket.on('updateInfo', function (data) {
@@ -86,6 +132,7 @@ io.on('connection', function (socket) {
 
   })
 })
+
 
 var allPlayerInfo = {
   'hall': [],

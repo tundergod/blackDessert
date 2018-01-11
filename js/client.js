@@ -10,26 +10,32 @@ Client.askNewPlayer = function () {
 }
 
 // 1-1. 送玩家輸入的帳號密碼去伺服器
-Client.loginAcc = function(){
+Client.loginAcc = function(accInfo){
+  //console.log("accInfo from client : " + accInfo)
   Client.socket.emit('accInfoSocket', accInfo)
+}
+// 1-1-2, 送註冊訊息過去伺服器
+Client.registerAcc = function(accInfo){
+  Client.socket.emit('accRegisterSocket',accInfo)
 }
 
 // 1-2. 確認帳號對不對
-Client.socket.on('loginStateConfirmSocket', function(data){
+/*Client.socket.on('loginStateConfirmSocket', function(data){
   playerInfo.userName = data;
-})
+  console.log('1-2socket = '+playerInfo.userName)
+})*/
 
 // 2.接收確認與ID
 Client.socket.on('askplayerID', function (data) {
   console.log('Your ID is ' + data.userID)
   playerInfo = data
-  console.log(playerInfo)
+  //console.log(playerInfo)
 })
 
 // 傳送操作資訊給服務器
 Client.sendUpdateInfo = function () {
   Client.socket.emit('updateInfo', playerInfo)
-  console.log(playerInfo)
+  //console.log(playerInfo)
 }
 
 Client.socket.on('updateResult', function (data) {

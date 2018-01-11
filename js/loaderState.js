@@ -69,7 +69,14 @@ loaderState.preload = function(){
   game.load.image('gameover','../assets/gameover.png')
   game.load.spritesheet('kaboom','../assets/explode.png', 128,128)
 
-  game.load.onFileComplete.add(function(progress){
+  game.load.image('button_login', '../assets/scene_login/login_button.png')
+  game.load.image('button_register', '../assets/scene_login/register_button.png')
+  game.load.image('button_cancel', '../assets/scene_login/cancel_button.png')
+  game.load.image('window_login', '../assets/scene_login/login_window.png')
+  game.load.image('window_register', '../assets/scene_login/register_window.png')
+
+
+game.load.onFileComplete.add(function(progress){
     loaderState.progressText.text = 'loading ' + progress + '%';
     if(progress === 100){
       loaderState.progressText.text = ''
@@ -85,8 +92,8 @@ loaderState.create = function(){
 
   /*****send message to server*****/
 
-    playerInfo.playerState = state[1]
-    Client.sendUpdateInfo()
+    //playerInfo.playerState = state[1]
+    //Client.sendUpdateInfo()
 
   /********************************/
 
