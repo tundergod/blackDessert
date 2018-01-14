@@ -83,8 +83,7 @@ chooseState.create = function() {
   chooseState.button.position.x = chooseState.frame.position.x + chooseState.frame.width - chooseState.button.width * 1.6;
   chooseState.button.position.y = chooseState.frame.position.y + chooseState.frame.height - chooseState.button.height * 2.5;
   chooseState.button.events.onInputDown.add(chooseState.choosePlayer, this)
-  chooseState.button.inputEnabled = true;
-
+    chooseState.button.inputEnabled = true;
   // add the up & down arrow button
   chooseState.upArrow = chooseState.add.sprite(width * 0.73, height * 0.03, 'upArrow');
   chooseState.upArrow.inputEnabled = true;
@@ -270,7 +269,7 @@ chooseState.update = function() {
 
 chooseState.choosePlayer = function(){
   playerInfo.heroChoose = hero[chooseState.index]
-  playerInfo.heroState.hp = 100
+  playerInfo.heroState.hp = 100 
   chooseState.timeStart = new Date()
   game.state.start('mapState')
-}
+}  
