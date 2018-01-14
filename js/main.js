@@ -1,5 +1,5 @@
-var width = $(window).width() * 0.9
-var height = $(window).height() * 0.9
+var width = $(window).width()
+var height = $(window).height()
 var game = new Phaser.Game(width, height, Phaser.CANVAS, document.getElementById('game'), {})
 
 // define screen scale
