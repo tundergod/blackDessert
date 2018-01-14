@@ -46,6 +46,10 @@ var playerInfo = {
   "heroState":{
     "fighting":"0", //0 = 不在打架 1 = 在打架 不可以被搜索
     "hp":"", // maximum=100 <--- minimum=0
+    "atk":"",
+    "def":"",
+    "ctrl":"",
+    "item":[],
     "state":"", // fighting=2,searching=1,nothing=0
     "locate":"", // map=0, castle=1, forest=2, lake=3, town=4, cave=5
     "search":"", // plyaer press search? no=0 , yes=1
