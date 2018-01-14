@@ -109,7 +109,7 @@ TODO:
     borderRadius: 6,
     placeHolder: 'Username',
     //textAlign: 'center',
-    zoom: true
+    zoom: false
   });
   
   //input password
@@ -125,7 +125,7 @@ TODO:
       borderRadius: 6,
       placeHolder: 'Password',
       type: PhaserInput.InputType.password,
-      zoom: true
+      zoom: false
     });
   password.focusOutOnEnter = false;
   password_verify = game.add.inputField(loginState.world.centerX * 0.9, loginState.world.height * 0.53, {
@@ -140,7 +140,7 @@ TODO:
       borderRadius: 6,
       placeHolder: 'Password',
       type: PhaserInput.InputType.password,
-      zoom: true
+      zoom: false
     });
   password_verify.visible = false
 }
