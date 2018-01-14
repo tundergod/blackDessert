@@ -39,40 +39,40 @@ Client.sendUpdateInfo = function () {
 }
 
 Client.socket.on('updateResult', function (data) {
-  var n = searchIndex(data, playerInfo.userID)
-  // copy data
-  playerInfo = data.hall[n]
+  if(playerInfo.userID){
+    var n = searchIndex(data, playerInfo.userID)
+    // copy data
+    playerInfo = data.hall[n]
 
-  // update hp
-  if(typeof(sceneState.hpText) != "undefined"){
-    sceneState.hpText = playerInfo.heroState.hp
-  }
-  
-  /* FIGHT , 2 second*/
-  if (playerInfo.heroState.searched.enermy != 0) {
-    console.log("search an enermy!") 
-    sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
-    sceneState.attackButton.inputEnabled = true                                                                                          
-    sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
-    sceneState.enermy.visible = true
-    sceneState.enermyid.text = "xxx"
-    sceneState.enermyhp.text = "xxx"
-    sceneState.enermyatk.text = "xxx"
-    sceneState.enermydef.text = "xxx"
-    sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
-  }
+    // update hp
+    if(typeof(sceneState.hpText) != "undefined"){
+      sceneState.hpText = playerInfo.heroState.hp
+    }
+    /* FIGHT , 2 second*/
+    if (playerInfo.heroState.searched.enermy != 0) {
+      console.log("search an enermy!") 
+      sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
+      sceneState.attackButton.inputEnabled = true                                                                                          
+      sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
+      sceneState.enermy.visible = true
+      sceneState.enermyid.text = "xxx"
+      sceneState.enermyhp.text = "xxx"
+      sceneState.enermyatk.text = "xxx"
+      sceneState.enermydef.text = "xxx"
+      sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
+    } 
 
-  if(playerInfo.heroState.searched.fighted === 1){
-    playerInfo.heroState.fighting = 1 
-    playerInfo.heroState.searched.fighted = 0
-    console.log("attacked!!!!!!!!")
-    game.state.start('miniGameState', true, false, sceneState.sceneData)
-  }
+    if(playerInfo.heroState.searched.fighted === 1){
+      playerInfo.heroState.fighting = 1 
+      playerInfo.heroState.searched.fighted = 0
+      console.log("attacked!!!!!!!!")
+      game.state.start('miniGameState', true, false, sceneState.sceneData)
+    }
 
-  if(playerInfo.heroState.hp < 0){
-    game.state.start('gameOverState')
+    if(playerInfo.heroState.hp < 0){
+      game.state.start('gameOverState')
+    } 
   }
-
 })
 
 function back(){
