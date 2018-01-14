@@ -32,7 +32,7 @@ app.get('/', function (req, res) {
 })
 
 server.lastPlayerID = 0
-var port = 7777
+var port = 8877
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
@@ -50,7 +50,6 @@ io.on('connection', function (socket) {
   var userName = '';
   socket.on('newplayer', function (info) {
     // listen使用者登入資訊
-    console.log("lalala" + JSON.stringify(info))
     socket.on('accInfoSocket', function(accInfo){
       mysqlConnect();
       //console.log('Username from socket = ' + accInfo[0])
@@ -145,7 +144,6 @@ function makeID () {
 
 function ssearchIndex (id) {
   for (let i = 0; i < allPlayerInfo.hall.length; i++) {
-    console.log('check'+i)
     if (allPlayerInfo.hall[i].userID === id) {
       return i
     }
@@ -162,13 +160,16 @@ function processUpdateInfo (data) {
 /* 同步 */
   allPlayerInfo.hall[n] = data
 
-/* SEARCH******************************************************/
-
+/****SEARCH******************************************************/
+var percent = 80
   // when player search
   if (data.heroState.search === 1) {
+
     // search all player, push to searched
+    console.log(allPlayerInfo.hall[n].userName +" search!")
+
     for (let i = 0; i < allPlayerInfo.hall.length; i++) {
-      if (allPlayerInfo.hall[i].userID != data.userID && allPlayerInfo.hall[i].heroState.locate === data.heroState.locate) {
+      if ((allPlayerInfo.hall[i].userID != data.userID) && (allPlayerInfo.hall[i].heroState.locate === data.heroState.locate) && (allPlayerInfo.hall[i].heroState.fighting !== 1)) {
         searched.push(allPlayerInfo.hall[i].userID)
       }
     }
@@ -176,10 +177,10 @@ function processUpdateInfo (data) {
     // find out which player searched
     if (searched.length > 0) {
       // random probability, 80% search enermy , 20% search treasure
-      // 1 - 10 , if 1~8=enermy
-      var random = Math.floor((Math.random() * 10) + 1)
-      console.log('random = ' + random)
-      if (random < 9) {
+      // 1 - 100 , if 1~8=enermy
+      var random = Math.floor((Math.random() * 100) + 1)
+      console.log("randomm 的數字 = " + random)
+      if (random < percent) {
         // choose an enermy
         enermy = searched[Math.floor((Math.random() * searched.length))]
         console.log('enermy id = ' + enermy)
@@ -190,21 +191,25 @@ function processUpdateInfo (data) {
         allPlayerInfo.hall[n].heroState.searched.enermy = '0'
       }
     }
-
-    console.log('searched = ' + searched)
   }
 
-/* FIGHT***********************************************************/
+/****FIGHT***********************************************************/
 
   if (data.heroState.searched.fight === 1) {
     var z = ssearchIndex(data.heroState.searched.enermy)
-    //allPlayerInfo.hall[z].heroState.hp = allPlayerInfo.hall[z].heroState.hp - 10
-    /////////////////////////////////////// above something wrong
-    allPlayerInfo.hall[n].heroState.searched.enermy = '0'
+    allPlayerInfo.hall[n].heroState.searched.enermy = 0
     allPlayerInfo.hall[n].heroState.searched.fight = 0
+    allPlayerInfo.hall[z].heroState.searched.fighted = 1
+    //allPlayerInfo.hall[z].heroState.hp -= 10
   }
-  //allPlayerInfo.hall[n].heroState.search = 0
+
+
+/**************count fight score**********************/
+//  if(data.heroState.search.score )
+
+
   showAll(n)
+
   return allPlayerInfo
 }
 
