@@ -42,17 +42,15 @@ sceneState.create = function(){
   sceneState.hero.scale.setTo(scaleX,scaleY)
   sceneState.hero.anchor.setTo(-0.05,-0.2)
 
-  sceneState.walkButton = sceneState.add.sprite(0,0,'walkButton')
+  sceneState.walkButton = sceneState.add.sprite(0,0,'walkButtonActive')
   sceneState.walkButton.scale.setTo(scaleX,scaleY)
-  sceneState.walkButton.anchor.setTo(-4.8,-2.1)
+  sceneState.walkButton.anchor.setTo(-4.1,-1.9)
   sceneState.walkButton.inputEnabled = true
   sceneState.walkButton.events.onInputDown.add(sceneState.search)
 
   sceneState.attackButton = sceneState.add.sprite(0,0,'attackButton')
   sceneState.attackButton.scale.setTo(scaleX,scaleY)
-  sceneState.attackButton.anchor.setTo(-6,-3.7)
-  sceneState.attackButton.inputEnabled = true 
-  sceneState.attackButton.events.onInputDown.add(sceneState.attack)
+  sceneState.attackButton.anchor.setTo(-5.2,-3.3)
 
   sceneState.backButton = sceneState.add.sprite(0,0,'exitButton')
   sceneState.backButton.scale.setTo(scaleX,scaleY)
@@ -70,6 +68,28 @@ sceneState.create = function(){
   sceneState.skillButton.inputEnabled = true
   sceneState.skillButton.events.onInputDown.add(sceneState.skill)
 
+  sceneState.enermy = sceneState.add.sprite(0,0,'enermyInfo')
+  sceneState.enermy.scale.setTo(scaleX, scaleY)
+  sceneState.enermy.position.x = width - 20 - sceneState.enermy.width
+  sceneState.enermy.position.y = height - sceneState.enermy.height*2
+  sceneState.enermy.visible = false
+
+  sceneState.enermyid = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyid.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
+  sceneState.enermyid.position.y = sceneState.enermy.position.y + sceneState.enermy.height/6.8
+
+  sceneState.enermyhp = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyhp.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
+  sceneState.enermyhp.position.y = sceneState.enermy.position.y + sceneState.enermy.height/3.3
+
+  sceneState.enermyatk = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyatk.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
+  sceneState.enermyatk.position.y = sceneState.enermy.position.y + sceneState.enermy.height/2.1
+
+  sceneState.enermydef = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermydef.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
+  sceneState.enermydef.position.y = sceneState.enermy.position.y + sceneState.enermy.height/1.5
+
   sceneState.hpText = sceneState.add.text(0, 0, 'HP:' + playerInfo.heroState.hp, {font:"32px Arial", fill:"red"})
 
   sceneState.timerText = sceneState.add.text(sceneState.world.centerX, 10, '', {font: "32px Arial", fill: "#fff"})
@@ -79,16 +99,20 @@ sceneState.create = function(){
 sceneState.search = function(){
   console.log("search")
   game.plugins.screenShake.shake(30);
+  sceneState.walkButton.loadTexture("walkButton")
+  sceneState.walkButton.inputEnabled = false
+  sceneState.time.events.add(Phaser.Timer.SECOND * 3, sceneState.searchBack, this)
 
 /*****send message to server*****/
-
-  // search = 1 代表按下去了
-  // search = 0 代表沒有按
   playerInfo.heroState.search = 1
   Client.sendUpdateInfo()
-
 /********************************/
+}
 
+sceneState.searchBack = function(){
+  console.log("hhh")
+  sceneState.walkButton.loadTexture("walkButtonActive")
+  sceneState.walkButton.inputEnabled = true
 }
 
 sceneState.skill = function(){
@@ -108,12 +132,17 @@ sceneState.backState = function(){
 
 /********************************/
 
-  game.state.start('mapState', true, false, sceneState.sceneData)
+  game.state.start('mapState', false, false, sceneState.sceneData)
 }
 
-sceneState.attack = function(){
+sceneState.pressAttack = function(){
+
+  sceneState.attackButton.loadTexture("attackButton")
+  sceneState.attackButton.inputEnabled = false
   console.log('attack')
   playerInfo.heroState.searched.fight = 1
+  playerInfo.heroState.fighting = 1
   Client.sendUpdateInfo()
-  game.state.start('miniGameState', false, false)
+  game.state.start('miniGameState', false, false, sceneState.sceneData)
 }
+

@@ -40,20 +40,33 @@ Client.sendUpdateInfo = function () {
 
 Client.socket.on('updateResult', function (data) {
   var n = searchIndex(data, playerInfo.userID)
+  // copy data
   playerInfo = data.hall[n]
 
+  // update hp
   if(typeof(sceneState.hpText) != "undefined"){
     sceneState.hpText = playerInfo.heroState.hp
   }
   
-  /* FIGHT */
-  if (playerInfo.heroState.searched.enermy != '0') {
-    console.log("search an enermy!")  
+  /* FIGHT , 2 second*/
+  if (playerInfo.heroState.searched.enermy != 0) {
+    console.log("search an enermy!") 
+    sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
+    sceneState.attackButton.inputEnabled = true                                                                                          
+    sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
+    sceneState.enermy.visible = true
+    sceneState.enermyid.text = "xxx"
+    sceneState.enermyhp.text = "xxx"
+    sceneState.enermyatk.text = "xxx"
+    sceneState.enermydef.text = "xxx"
+    sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
   }
 
   if(playerInfo.heroState.searched.fighted === 1){
-    console.log("been attacked!!!!!!!!")
-    game.state.start('miniGameState')
+    playerInfo.heroState.fighting = 1 
+    playerInfo.heroState.searched.fighted = 0
+    console.log("attacked!!!!!!!!")
+    game.state.start('miniGameState', true, false, sceneState.sceneData)
   }
 
   if(playerInfo.heroState.hp < 0){
@@ -61,6 +74,17 @@ Client.socket.on('updateResult', function (data) {
   }
 
 })
+
+function back(){
+  console.log("hello")
+  sceneState.attackButton.loadTexture("attackButton")
+  sceneState.attackButton.inputEnabled = false
+  sceneState.enermy.visible = false
+  sceneState.enermyid.text = ""
+  sceneState.enermyhp.text = ""
+  sceneState.enermyatk.text = ""
+  sceneState.enermydef.text = ""
+}
 
 function searchIndex (data, id) {
   for (let i = 0; i < data.hall.length; i++) {

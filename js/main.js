@@ -44,14 +44,17 @@ var playerInfo = {
   "playerState":"", 
   "heroChoose":"",
   "heroState":{
+    "fighting":"0", //0 = 不在打架 1 = 在打架 不可以被搜索
     "hp":"", // maximum=100 <--- minimum=0
     "state":"", // fighting=2,searching=1,nothing=0
     "locate":"", // map=0, castle=1, forest=2, lake=3, town=4, cave=5
     "search":"", // plyaer press search? no=0 , yes=1
     "searched":{
-      "enermy":"0", //no enermy = 0, got enermy = enermy userID
+      "enermy":"0", //no enermy = 0, got enermy = enermy userID。 對手是誰
+      "attackedBy":"", //被誰打
       "fight":"", //if searched an enermy, fight = 1
-      "fighted":"" //if someone searched player and fight him, = 1, else = 0
+      "fighted":"", //if someone searched player and fight him, = 1, else = 0
+      "score":""
     }
   } 
 }

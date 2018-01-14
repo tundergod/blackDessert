@@ -1,7 +1,8 @@
 var miniGameState = {}
 
-var numButton = 40
+var numButton = 10
 var numLine = 4
+var speed = 200
 
 miniGameState.count = 0
 miniGameState.button = []
@@ -20,6 +21,13 @@ miniGameState.init = function(data){
 miniGameState.create = function(){
 
   console.log('----miniGameState----') 
+  /*****send message to server*****/
+
+    playerInfo.playerState = state[7]
+    Client.sendUpdateInfo()
+
+  /********************************/
+
   miniGameState.score = 0
 
   miniGameState.bg = miniGameState.add.sprite(0, 0, 'black')
@@ -30,7 +38,7 @@ miniGameState.create = function(){
   miniGameState.scoreText = miniGameState.add.text(10, 10, '0', style)
 
   miniGameState.physics.startSystem(Phaser.Physics.ARCADE)
-  miniGameState.physics.arcade.gravity.y = 500
+  miniGameState.physics.arcade.gravity.y = 200
   miniGameState.time.events.repeat(Phaser.Timer.SECOND * 0.2, numButton, miniGameState.createButton)
 
   miniGameState.backButton = sceneState.add.sprite(0,0,'exitButton')                                                         
@@ -72,9 +80,12 @@ miniGameState.boom = function(){
 }
 
 miniGameState.end = function(){
-  console.log("haha")
 }
 
 miniGameState.backState = function(){
-  game.state.start('sceneState', true, false, miniGameState.data)
+  miniGameState.end()
+  playerInfo.heroState.searched.score = miniGameState.score
+  playerInfo.heroState.fighting = 0
+  Client.sendUpdateInfo()
+  game.state.start('sceneState', false, false, miniGameState.data)
 }

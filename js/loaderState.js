@@ -93,8 +93,9 @@ loaderState.preload = function(){
   game.load.image('window_login', '../assets/scene_login/login_window.png')
   game.load.image('window_register', '../assets/scene_login/register_window.png')
 
+  game.load.image('enermyInfo', '../assets/enemy_window.png')
 
-game.load.onFileComplete.add(function(progress){
+  game.load.onFileComplete.add(function(progress){
     loaderState.progressText.text = 'loading ' + progress + '%';
     if(progress === 100){
       loaderState.progressText.text = ''
