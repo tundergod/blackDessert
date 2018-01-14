@@ -22,7 +22,8 @@ game.state.add('gameOverState', gameOverState)
 // global variable define
 var heroNum = 10
 var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave']
-var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
+//var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
+var hero = ['druid', 'knight', 'nun', 'sniper', 'ninja', 'warrior', 'fairy', 'swordman', 'poet', 'assassin']
 var state = ['bootState', 'loaderState', 'loginState', 'searchState', 'chooseState', 'mapState', 'sceneState', 'miniGameState', 'gameOverState']
 
 /*
