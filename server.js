@@ -32,7 +32,7 @@ app.get('/', function (req, res) {
 })
 
 server.lastPlayerID = 0
-var port = 8877
+var port = 7777
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
