@@ -60,9 +60,9 @@ loaderState.preload = function(){
 
   // load scenec background
   game.load.image('forestBG', '../assets/scene_search/Map_Forest.png')
-  game.load.image('lakeBG', '../assets/scene_search/Map_Forest.png')
+  game.load.image('lakeBG', '../assets/scene_search/Map_Lake.png')
   game.load.image('castleBG', '../assets/scene_search/Map_castle.png')
-  game.load.image('townBG', '../assets/scene_search/Map_Forest.png')
+  game.load.image('townBG', '../assets/scene_search/Map_Town.png')
   game.load.image('caveBG', '../assets/scene_search/Map_cave.png')
 
   // load head
