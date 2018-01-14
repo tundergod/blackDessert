@@ -7,6 +7,24 @@ loaderState.init = function(){
 }
 
 loaderState.preload = function(){
+  for (i = 1 ; i < 11 ; ++i){
+  // load head
+    game.load.image('head'+i,'../assets/scene_class/class_command_'+i+'.png')
+    // load frame
+    game.load.image('chooseFrame_'+i, '../assets/scene_class/class_window_'+i+'.png');                              
+    // load name
+    game.load.image('name'+i,'../assets/scene_class/name_'+i+'.png');
+    // load figure
+    game.load.image('figure'+i, '../assets/scene_class/figure_'+i+'.png');
+  }
+  // load other
+  game.load.image('background', '../assets/scene_choose/map_back.png')
+  game.load.image('chooseButton','../assets/scene_class/enter_command.png')
+  game.load.image('chooseHeroName','../assets/scene_class/class_name_window.png')
+  game.load.image('shadow','../assets/scene_class/shadow.png')
+
+  game.load.image('upArrow', '../assets/scene_class/arrow_up.png');
+  game.load.image('downArrow', '../assets/scene_class/arrow_down.png');
 
   // load actor 
   game.load.image('assassin', '../assets/actor/Assassin.png')

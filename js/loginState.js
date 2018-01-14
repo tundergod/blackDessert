@@ -62,6 +62,18 @@ TODO:
   loginState.button_cancel.events.useHandCursor = true;
   loginState.button_cancel.visible = false;
 
+  loginState.incorrect = game.add.text(game.world.centerX - loginState.button_register.width*0.55, game.world.centerY + loginState.button_register.height*2.5, 'Your username or password incorrect!', {
+    font: '18px Arial',
+    fill: '#ffffff'
+  });
+  loginState.incorrect.visible = false
+
+  loginState.repeat = game.add.text(game.world.centerX - loginState.button_register.width*0.65, game.world.centerY + loginState.button_register.height*2.5, 'Username repeated or password not equal!', {
+    font: '18px Arial',
+    fill: '#ffffff'
+  });
+  loginState.repeat.visible = false
+
 /*****send message to server*****/
   //console.log("hhhhh" + playerInfo)
   //playerInfo.playerState = state[2]
@@ -147,12 +159,19 @@ loginState.checkLogin = function(){
 }
 loginState.sqlRegister = function(){
   if(password.value == password_verify.value){
+    console.log('pas ' + password.value + ', verify ' + password_verify.value)
     accInfo = [user.value, password.value];
     Client.registerAcc(accInfo);
     loginState.cancelRegister();
+    Client.socket.on('sqlRegisterFailed', function(data){
+      if(data == 'repeat'){
+        loginState.repeat.visible = true
+      }
+    })
   }
   else{
     loginState.changeToRegister();
+    loginState.repeat.visible = true
   }
 }
 loginState.loginGame = function(){
@@ -163,6 +182,9 @@ loginState.loginGame = function(){
       //Client.sendUpdateInfo();
       //console.log(playerInfo.userName);
       game.state.start('searchState')
+    }
+    else{
+      loginState.incorrect.visible = true
     }
   })
 }
@@ -179,6 +201,8 @@ loginState.changeToRegister = function(){
   password_verify.visible = true
   password.setText('')
   password_verify.setText('')
+  loginState.incorrect.visible = false
+  loginState.repeat.visible = false
 }
 loginState.cancelRegister = function(){
   loginState.window_login.visible = true;

@@ -87,6 +87,7 @@ io.on('connection', function (socket) {
       mysqlConnect();
       var temp = 1
       var qString;
+      var att;
       var query = con.query("SELECT * FROM user_info", function (err, result, fields){
         if (err) throw err;
         var repeat = 0;
@@ -98,7 +99,7 @@ io.on('connection', function (socket) {
         }
         if(repeat == 1){ //repeat username founded
           console.log('register_repeat')
-          //socket.emit('registerDone', repeat);
+          socket.emit('sqlRegisterFailed', 'repeat');
         }
         else if(repeat == 0){ //no repeat
           console.log('register_success')
@@ -108,19 +109,12 @@ io.on('connection', function (socket) {
           console.log('qString = ' + qString)
           console.log(newID);
           temp = 2
-          //socket.emit('registerDone', repeat);
+          con.query(qString, function(err, results, fields){
+            console.log("real success")
+            mysqlDisconnect()
+          })
         }
       });
-      //query = con.query(qString);
-      while(1){
-        console.log("while")
-        if(temp != 1){
-          console.log('start query')
-          con.query(qString)
-          break
-        }
-      }
-      mysqlDisconnect();
     }); 
     // give player an id (15 random char)
 
@@ -132,7 +126,6 @@ io.on('connection', function (socket) {
 
   })
 })
-
 
 var allPlayerInfo = {
   'hall': [],

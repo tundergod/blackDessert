@@ -16,7 +16,7 @@ Client.loginAcc = function(accInfo){
 }
 // 1-1-2, 送註冊訊息過去伺服器
 Client.registerAcc = function(accInfo){
-  Client.socket.emit('accRegisterSocket',accInfo)
+  Cliennt.socket.emit('accRegisterSocket',accInfo)
 }
 
 // 1-2. 確認帳號對不對
