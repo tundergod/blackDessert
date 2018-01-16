@@ -94,6 +94,8 @@ loaderState.preload = function(){
   game.load.image('window_register', '../assets/scene_login/register_window.png')
 
   game.load.image('enermyInfo', '../assets/enemy_window.png')
+  game.load.image('ball', '../assets/drangon_ball_7.png')
+  game.load.audio('song','../assets/lightness.mp3')
 
   game.load.onFileComplete.add(function(progress){
     loaderState.progressText.text = 'loading ' + progress + '%';

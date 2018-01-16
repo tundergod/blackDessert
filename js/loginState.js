@@ -5,12 +5,8 @@ loginState.init = function(){
 }
 
 loginState.create = function(){
-/*
-TODO: 
-1.login : player login with username (with db)
-2.register : player register (with db)
-3.assign an specific id to each player (for authentication and play game)
-*/
+  var sound = game.sound.play('song')
+  sound.loop = true
   //login window
   loginState.window_login = loginState.add.sprite(0,0,'window_login') 
   loginState.window_login.scale.setTo(scaleX, scaleY)

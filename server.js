@@ -5,6 +5,8 @@ var io = require('socket.io').listen(server)
 var mysql
 var con
 var fc = 0 // record broadcast(fight , counter) or emit all(other)
+var port = 7787
+
 function mysqlConnect(){
   mysql = require('mysql');                                                                                      
   con = mysql.createConnection({
@@ -33,7 +35,6 @@ app.get('/', function (req, res) {
 })
 
 server.lastPlayerID = 0
-var port = 7777
 
 server.listen(process.env.PORT || port, function () {
   console.log('Listening on ' + server.address().port)
@@ -225,6 +226,31 @@ var percent = 80
     }
 
   }
+
+/****************SKILL*********************************/
+
+  if(data.heroState.skill === 1){
+    if(data.heroChoose === 'nun'){
+      allPlayerInfo.hall[n].heroState.hp += 20
+      if(allPlayerInfo.hall[n].heroState.hp >= allPlayerInfo.hall[n].heroState.maxhp){
+        allPlayerInfo.hall[n].heroState.hp = allPlayerInfo.hall[n].heroState.maxhp
+      }
+    }
+
+    if(data.heroChoose === 'ninja'){
+      allPlayerInfo.hall[n].heroState.atk += 10
+    }
+
+    if(data.heroChoose === 'warrior'){
+      allPlayerInfo.hall[n].heroState.def +=5
+    }
+
+    if(data.heroChoose === 'assassin'){
+      allPlayerInfo.hall[n].heroState.counterPercent += 10
+    }
+  }
+
+/**************************************************/
 
   showAll(n)
 

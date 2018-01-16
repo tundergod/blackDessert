@@ -23,7 +23,6 @@ game.state.add('winState', winState)
 // global variable define
 var heroNum = 10
 var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave']
-//var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
 var hero = ['druid', 'knight', 'nun', 'sniper', 'ninja', 'warrior', 'fairy', 'swordman', 'poet', 'assassin']
 var state = ['bootState', 'loaderState', 'loginState', 'searchState', 'chooseState', 'mapState', 'sceneState', 'miniGameState', 'gameOverState', 'winState']
 
@@ -42,18 +41,17 @@ playerState:
 var playerInfo = {
   "userID":"",
   "userName":"",
-  "playerState":"", 
+  "playerState":"",
   "heroChoose":"",
   "heroState":{
-    "fighting":"0", //0 = 不在打架 1 = 在打架 不可以被搜索
     "maxhp":"",
     "hp":"", // maximum=100 <--- minimum=0
     "atk":"",
     "def":"",
-    "counterPercent":"50",
+    "counterPercent":"",
     "item":[],
     "equip":[],
-    "state":"", // fighting=2,searching=1,nothing=0
+    "skill":"", //1 = use
     "locate":"", // map=0, castle=1, forest=2, lake=3, town=4, cave=5
     "search":"0", // plyaer press search? no=0 , yes=1
     "searched":{

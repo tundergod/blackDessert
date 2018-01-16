@@ -1,6 +1,7 @@
 var bootState = {}
 
 bootState.init = function () {
+  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
   game.stage.disableVisibilityChange = true
 
   // center the phaser

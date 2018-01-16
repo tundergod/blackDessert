@@ -86,23 +86,25 @@ sceneState.create = function(){
   sceneState.enermy.position.y = height - sceneState.enermy.height*2
   sceneState.enermy.visible = false
 
-  sceneState.enermyid = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyid = sceneState.add.text(0, 0, '', {font:"16px Arial", fill:"red"})
   sceneState.enermyid.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
   sceneState.enermyid.position.y = sceneState.enermy.position.y + sceneState.enermy.height/6.8
 
-  sceneState.enermyhp = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyhp = sceneState.add.text(0, 0, '', {font:"16px Arial", fill:"red"})
   sceneState.enermyhp.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
   sceneState.enermyhp.position.y = sceneState.enermy.position.y + sceneState.enermy.height/3.3
 
-  sceneState.enermyatk = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermyatk = sceneState.add.text(0, 0, '', {font:"16px Arial", fill:"red"})
   sceneState.enermyatk.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
   sceneState.enermyatk.position.y = sceneState.enermy.position.y + sceneState.enermy.height/2.1
 
-  sceneState.enermydef = sceneState.add.text(0, 0, '', {font:"12px Arial", fill:"red"})
+  sceneState.enermydef = sceneState.add.text(0, 0, '', {font:"16px Arial", fill:"red"})
   sceneState.enermydef.position.x = sceneState.enermy.position.x + sceneState.enermy.width/4
   sceneState.enermydef.position.y = sceneState.enermy.position.y + sceneState.enermy.height/1.5
 
   sceneState.hpText = sceneState.add.text(0, 0, 'HP:' + playerInfo.heroState.hp, {font:"32px Arial", fill:"red"})
+  sceneState.hpText.position.x = sceneState.hero.width
+  sceneState.hpText.position.y = height - 10 - sceneState.hpText.height
 
   sceneState.timerText = sceneState.add.text(sceneState.world.centerX, 10, '', {font: "32px Arial", fill: "#fff"})
   sceneState.timerText.anchor.setTo(0.5, 0)
@@ -126,6 +128,14 @@ sceneState.searchBack = function(){
 }
 
 sceneState.skill = function(){
+  playerInfo.heroState.skill = 1
+  Client.sendUpdateInfo()
+  sceneState.skillButton.visible = false
+  sceneState.time.events.add(Phaser.Timer.SECOND * 3, sceneState.skillDone, this)
+}
+
+sceneState.skillDone = function(){
+  sceneState.skillButton.visible = true
 }
 
 sceneState.backState = function(){

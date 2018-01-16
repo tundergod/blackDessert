@@ -61,11 +61,12 @@ Client.socket.on('updateResult', function (data) {
       sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
       sceneState.attackButton.inputEnabled = true                                                                                          
       sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
+      var z = searchIndex(data, playerInfo.heroState.searched.enermy)
       sceneState.enermy.visible = true
-      sceneState.enermyid.text = "xxx"
-      sceneState.enermyhp.text = "xxx"
-      sceneState.enermyatk.text = "xxx"
-      sceneState.enermydef.text = "xxx"
+      sceneState.enermyid.text = data.hall[z].userName
+      sceneState.enermyhp.text = data.hall[z].heroState.hp
+      sceneState.enermyatk.text = data.hall[z].heroState.atk
+      sceneState.enermydef.text = data.hall[z].heroState.def
       sceneState.time.events.add(Phaser.Timer.SECOND * 3, back, this)
     } 
 
@@ -127,8 +128,8 @@ function miniGame(){
   
   function createButton(){
     var random = Math.floor((Math.random() * numLine))
-    button[count] = game.add.sprite(0, -100, 'head1')
-    button[count].scale.setTo(0.2, 0.2)
+    button[count] = game.add.sprite(0, -100, 'ball')
+    button[count].scale.setTo(0.35, 0.35)
     button[count].position.x = game.world.centerX - (button[count].width * (numLine / 2) - 10 * (numLine / 2)) + (button[count].width * random + 10 * random)  
     game.physics.enable(button[count], Phaser.Physics.ARCADE)
     button[count].inputEnabled = true

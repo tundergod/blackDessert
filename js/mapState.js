@@ -18,7 +18,6 @@ mapState.create = function(){
   Client.sendUpdateInfo()
 
 /********************************/
-
   console.log('----mapState----') 
   mapState.bg = mapState.add.sprite(0,0,'background')
   mapState.bg.scale.setTo(scaleX, scaleY)

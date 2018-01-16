@@ -270,7 +270,19 @@ chooseState.update = function() {
 
 chooseState.choosePlayer = function(){
   playerInfo.heroChoose = hero[chooseState.index]
-  playerInfo.heroState.hp = 100
+
+  if(playerInfo.heroChoose === 'druid'){
+    playerInfo.heroState.maxhp = 150
+    playerInfo.heroState.hp = 150
+  }
+  else{
+    playerInfo.heroState.maxhp = 100
+    playerInfo.heroState.hp = 100
+  }
+
+  if(playerInfo.heroChoose === 'sniper'){
+    playerInfo.heroState.atk = 30
+  }
   chooseState.timeStart = new Date()
   game.state.start('mapState')
 }
