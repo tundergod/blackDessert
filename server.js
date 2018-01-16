@@ -5,7 +5,7 @@ var io = require('socket.io').listen(server)
 var mysql
 var con
 var fc = 0 // record broadcast(fight , counter) or emit all(other)
-var port = 7787
+var port = 7789
 
 function mysqlConnect(){
   mysql = require('mysql');                                                                                      
