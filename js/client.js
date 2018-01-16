@@ -48,6 +48,9 @@ Client.socket.on('updateResult', function (data) {
     // update player hp
     if(typeof(sceneState.hpText) != "undefined"){
       sceneState.hpText.text = 'HP:' + playerInfo.heroState.hp
+      if(playerInfo.heroState.hp <= 0){
+        game.state.start("gameOverState")
+      }
     }
 
     // fight button , 3 second colddown

@@ -50,7 +50,7 @@ var playerInfo = {
     "hp":"", // maximum=100 <--- minimum=0
     "atk":"",
     "def":"",
-    "counterPercent":"80",
+    "counterPercent":"50",
     "item":[],
     "equip":[],
     "state":"", // fighting=2,searching=1,nothing=0
