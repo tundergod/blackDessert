@@ -170,7 +170,11 @@ function processUpdateInfo (data) {
   allPlayerInfo.hall[n] = data
 
 /****SEARCH******************************************************/
-var percent = 80
+  var percent = 80
+  if(allPlayerInfo.hall[n].heroChoose === 'poet'){
+    percent += 10
+  }
+
   
   // when player search
   if (data.heroState.search === 1) {
@@ -199,9 +203,10 @@ var percent = 80
         allPlayerInfo.hall[n].heroState.search = 0
 
       } 
-      //如果找到物品，random物品，把search
-      else {
+      else { //找到物品
         allPlayerInfo.hall[n].heroState.searched.enermy = 0
+        allPlayerInfo.hall[n].heroState.searched.found = 0
+        allPlayerInfo.hall[n].heroState.search = 0
       }
     }
   }
@@ -216,6 +221,14 @@ var percent = 80
     allPlayerInfo.hall[n].heroState.searched.fight = 0
     allPlayerInfo.hall[z].heroState.searched.fighted = 1
 
+    if(allPlayerInfo.hall[n].heroChoose === "assassin"){
+      allPlayerInfo.hall[z].heroState.searched.skillEffect = 1
+    }
+
+    if(allPlayerInfo.hall[n].heroChoose === "ninja"){
+      allPlayerInfo.hall[z].heroState.searched.skillEffect = 2
+    }
+
     //利用反擊率，隨機會不會成功反擊
     var counter = Math.floor((Math.random() * 100) + 1)
     console.log("counter = " + counter)
@@ -224,39 +237,9 @@ var percent = 80
       console.log("in counter")
       allPlayerInfo.hall[n].heroState.searched.counter = 1;
     }
-
   }
-
-/****************SKILL*********************************/
-
-  if(data.heroState.skill === 1){
-    if(data.heroChoose === 'nun'){
-      allPlayerInfo.hall[n].heroState.hp += 20
-      if(allPlayerInfo.hall[n].heroState.hp >= allPlayerInfo.hall[n].heroState.maxhp){
-        allPlayerInfo.hall[n].heroState.hp = allPlayerInfo.hall[n].heroState.maxhp
-      }
-    }
-
-    if(data.heroChoose === 'ninja'){
-      allPlayerInfo.hall[n].heroState.atk += 10
-    }
-
-    if(data.heroChoose === 'warrior'){
-      allPlayerInfo.hall[n].heroState.def +=5
-    }
-
-    if(data.heroChoose === 'assassin'){
-      allPlayerInfo.hall[n].heroState.counterPercent += 10
-    }
-  }
-
-/**************************************************/
 
   showAll(n)
-
-
-/*清空必要狀態**************************************************/
-  // 在最後清空，search
   allPlayerInfo.hall[n].heroState.search = 0
 
   return allPlayerInfo
@@ -268,6 +251,7 @@ function showAll(n){
 
   for (let i = 0; i < allPlayerInfo.hall.length; i++) {
     console.log(JSON.stringify(allPlayerInfo.hall[i]))
+    allPlayerInfo.hall[n].heroState.search = 0
   }
   console.log('------------------------------------------\n')
   

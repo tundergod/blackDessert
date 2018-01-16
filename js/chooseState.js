@@ -283,6 +283,24 @@ chooseState.choosePlayer = function(){
   if(playerInfo.heroChoose === 'sniper'){
     playerInfo.heroState.atk = 30
   }
+  else{
+    playerInfo.heroState.atk = 10
+  }
+
+  if(playerInfo.heroChoose === 'swordman'){
+    playerInfo.heroState.counterPercent = 40
+  }
+  else{
+    playerInfo.heroState.counterPercent = 20
+  }
+
+  if(playerInfo.heroChoose === 'swordman'){
+    playerInfo.heroState.def = 15
+  }
+  else{
+    playerInfo.heroState.def = 5
+  }
+
   chooseState.timeStart = new Date()
   game.state.start('mapState')
 }
