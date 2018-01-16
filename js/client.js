@@ -73,7 +73,7 @@ Client.socket.on('updateResult', function (data) {
       sceneState.enermyatk.text = data.hall[z].heroState.atk
       sceneState.enermydef.text = data.hall[z].heroState.def
       enermyDef = data.hall[z].heroState.def
-      sceneState.time.events.add(Phaser.Timer.SECOND * 3, back, this)
+      sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
     } 
 
     // 如果被打
@@ -102,7 +102,9 @@ Client.socket.on('updateResult', function (data) {
 })
 
 function skillEffect(){
-  /*skill effect*/
+  /*skill effecti*/
+    numButton = 5
+    speed = 600
   if(playerInfo.heroChoose === 'warrior'){
     console.log("skill1")
     numButton -= 2

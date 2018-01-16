@@ -1,8 +1,5 @@
 var sceneState = {}
 var searchTimer
-var skillCD = 30
-var skillUseTime
-var nowTime
 // when nowTime - skillUseTime > 30 skill ok
 
 //var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave'] 
