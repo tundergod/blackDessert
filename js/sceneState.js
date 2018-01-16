@@ -1,5 +1,10 @@
 var sceneState = {}
 var searchTimer
+var skillCD = 30
+var skillUseTime
+var nowTime
+// when nowTime - skillUseTime > 30 skill ok
+
 //var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave'] 
 /*
 TODO:
@@ -18,7 +23,7 @@ sceneState.init = function(sceneData){
 sceneState.update = function(){
   sceneState.timerText.text = updateTimer()                                                                                 
 
-  for(let i = 0; i < count+40 ; i++){
+  for(let i = (count - 20); i < (count + 20) ; i++){
     if(typeof(button[i]) != "undefined"){
       if(button[i].position.y > height){
         minusHP()
@@ -115,14 +120,19 @@ sceneState.search = function(){
   game.plugins.screenShake.shake(30);
   sceneState.walkButton.loadTexture("walkButton")
   sceneState.walkButton.inputEnabled = false
-  sceneState.time.events.add(Phaser.Timer.SECOND * 3, sceneState.searchBack, this)
+
+  var time = 3
+  if(playerInfo.heroChoose === 'fairy'){
+    time = 2
+  }
+
+  sceneState.time.events.add(Phaser.Timer.SECOND * time, sceneState.searchBack, this)
 
   playerInfo.heroState.search = 1
   Client.sendUpdateInfo()
 }
 
 sceneState.searchBack = function(){
-  console.log("hhh")
   sceneState.walkButton.loadTexture("walkButtonActive")
   sceneState.walkButton.inputEnabled = true
 }
@@ -131,7 +141,7 @@ sceneState.skill = function(){
   playerInfo.heroState.skill = 1
   Client.sendUpdateInfo()
   sceneState.skillButton.visible = false
-  sceneState.time.events.add(Phaser.Timer.SECOND * 3, sceneState.skillDone, this)
+  sceneState.time.events.add(Phaser.Timer.SECOND * skillCD, sceneState.skillDone, this)
 }
 
 sceneState.skillDone = function(){

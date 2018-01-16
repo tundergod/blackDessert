@@ -1,4 +1,10 @@
 var Client = {}
+var button = []
+var count = 0
+var speed = 600
+var numButton = 5
+var numLine = 4
+var enermyDef
 
 Client.socket = io.connect()
 
@@ -41,9 +47,9 @@ Client.sendUpdateInfo = function () {
 Client.socket.on('updateResult', function (data) {
   if(playerInfo.userID){
     var n = searchIndex(data, playerInfo.userID)
-
     // copy playerInfo data
     playerInfo = data.hall[n]
+    var z = searchIndex(data, playerInfo.heroState.searched.enermy)
 
     // update player hp
     if(typeof(sceneState.hpText) != "undefined"){
@@ -57,33 +63,36 @@ Client.socket.on('updateResult', function (data) {
     if (playerInfo.heroState.searched.found === 1) {
       console.log("search an enermy!") 
       playerInfo.heroState.searched.found = 0
-      playerInfo.heroState.xxxxxxxxxxx = 1
+      Client.sendUpdateInfo()
       sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
       sceneState.attackButton.inputEnabled = true                                                                                          
       sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
-      var z = searchIndex(data, playerInfo.heroState.searched.enermy)
       sceneState.enermy.visible = true
       sceneState.enermyid.text = data.hall[z].userName
       sceneState.enermyhp.text = data.hall[z].heroState.hp
       sceneState.enermyatk.text = data.hall[z].heroState.atk
       sceneState.enermydef.text = data.hall[z].heroState.def
+      enermyDef = data.hall[z].heroState.def
       sceneState.time.events.add(Phaser.Timer.SECOND * 3, back, this)
     } 
 
-    // 如果被打，進入miniGame函式
+    // 如果被打
     if(playerInfo.heroState.searched.fighted === 1){
+      skillEffect()
       playerInfo.heroState.searched.fighted = 0
       playerInfo.heroState.searched.counter = 0
-      playerInfo.heroState.xxxxxxxxxxx = 0
+      playerInfo.heroState.searched.found = 0
       Client.sendUpdateInfo()
       console.log("fighted")
       miniGame()
     }
-
+  
+    // 如果被反擊
     if(playerInfo.heroState.searched.counter === 1){
+      skillEffect()
       playerInfo.heroState.searched.counter = 0
       playerInfo.heroState.searched.fighted = 0
-      playerInfo.heroState.xxxxxxxxxxx = 2
+      playerInfo.heroState.searched.found = 0
       Client.sendUpdateInfo()
       console.log("counter")
       miniGame()
@@ -92,8 +101,33 @@ Client.socket.on('updateResult', function (data) {
   }
 })
 
+function skillEffect(){
+  /*skill effect*/
+  if(playerInfo.heroChoose === 'warrior'){
+    console.log("skill1")
+    numButton -= 2
+  }
+
+  if(playerInfo.heroChoose === 'nun'){
+    console.log("skill2")
+    speed -= 200
+  }
+
+  if(playerInfo.heroState.searched.skillEffect === 1){
+    console.log("skill3")
+    playerInfo.heroState.searched.skillEffect = 0
+    speed += 200
+  }
+
+  if(playerInfo.heroState.searched.skillEffect === 2){
+    console.log("skill4")
+    playerInfo.heroState.searched.skillEffect = 0
+    numButton += 2
+  }
+
+}
+
 function back(){
-  console.log("hello")
   sceneState.attackButton.loadTexture("attackButton")
   sceneState.attackButton.inputEnabled = false
   sceneState.enermy.visible = false
@@ -111,13 +145,8 @@ function searchIndex (data, id) {
   }
 }
 
-var button = []
-var numButton = 4
-var count = 0
 
 function miniGame(){
-  var numLine = 4
-  var speed = 500
 
   // 開啓物理引擎
   game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -135,21 +164,18 @@ function miniGame(){
     button[count].inputEnabled = true
     button[count].events.onInputDown.add(boom,{n : count})
     count++
-    console.log(count)
   }
 
   function boom(){
-    var boom = game.add.sprite(button[this.n].position.x, button[this.n].position.y, 'kaboom');
+    var boom = game.add.sprite(button[this.n].position.x, button[this.n].position.y, 'kaboom')
     boom.animations.add('booooom');
     boom.animations.play('booooom', 80, false, true);
     button[this.n].destroy()
   }
-
 }
 
 function minusHP(){
-  
-  playerInfo.heroState.hp -= 10;
-  console.log("hp = " + playerInfo.heroState.hp)
+  console.log("edef = " + enermyDef)
+  playerInfo.heroState.hp = playerInfo.heroState.hp - (playerInfo.heroState.atk - enermyDef);
   Client.sendUpdateInfo()
 }
