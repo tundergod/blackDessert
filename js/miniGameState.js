@@ -49,14 +49,6 @@ miniGameState.create = function(){
 }
 
 miniGameState.createButton = function(){
-  //四個東西隨機選一個跌下來 (0 ~ 3)
-  /*
-  TODO:
-  1.畫遊戲的frame
-  2.畫遊戲的button
-  3.遊戲離開button
-  4,結束條件
-  */
   miniGameState.random = Math.floor((Math.random() * numLine))
   miniGameState.button[miniGameState.count] = miniGameState.add.sprite(0, -100, 'head1')
   miniGameState.button[miniGameState.count].scale.setTo(0.2, 0.2)

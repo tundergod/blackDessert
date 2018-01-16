@@ -3,6 +3,7 @@ var accInfo=[];
 loginState.init = function(){
   this.game.PhaserInput = this.game.plugins.add(PhaserInput.Plugin);
 }
+
 loginState.create = function(){
 /*
 TODO: 

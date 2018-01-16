@@ -17,6 +17,7 @@ game.state.add('mapState', mapState)
 game.state.add('sceneState', sceneState)
 game.state.add('miniGameState', miniGameState)
 game.state.add('gameOverState', gameOverState)
+game.state.add('winState', winState)
 
 
 // global variable define
@@ -24,7 +25,7 @@ var heroNum = 10
 var scenesPic = ['castle', 'forest', 'town', 'lake', 'cave']
 //var hero = ['assassin', 'druid', 'knight', 'fairy', 'ninja', 'nun', 'poet', 'sniper', 'swordman', 'warrior']
 var hero = ['druid', 'knight', 'nun', 'sniper', 'ninja', 'warrior', 'fairy', 'swordman', 'poet', 'assassin']
-var state = ['bootState', 'loaderState', 'loginState', 'searchState', 'chooseState', 'mapState', 'sceneState', 'miniGameState', 'gameOverState']
+var state = ['bootState', 'loaderState', 'loginState', 'searchState', 'chooseState', 'mapState', 'sceneState', 'miniGameState', 'gameOverState', 'winState']
 
 /*
 playerState:
@@ -49,18 +50,18 @@ var playerInfo = {
     "hp":"", // maximum=100 <--- minimum=0
     "atk":"",
     "def":"",
-    "ctrl":"",
+    "counterPercent":"80",
     "item":[],
     "equip":[],
     "state":"", // fighting=2,searching=1,nothing=0
     "locate":"", // map=0, castle=1, forest=2, lake=3, town=4, cave=5
-    "search":"", // plyaer press search? no=0 , yes=1
+    "search":"0", // plyaer press search? no=0 , yes=1
     "searched":{
+      "found":"0",
       "enermy":"0", //no enermy = 0, got enermy = enermy userID。 對手是誰
-      "attackedBy":"", //被誰打
-      "fight":"", //if searched an enermy, fight = 1
-      "fighted":"", //if someone searched player and fight him, = 1, else = 0
-      "score":""
+      "fight":"0", //if searched an enermy, fight = 1
+      "fighted":"0", //if someone searched player and fight him, = 1, else = 0
+      "counter":"0"
     }
   } 
 }

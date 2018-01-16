@@ -4,6 +4,7 @@ var server = require('http').Server(app)
 var io = require('socket.io').listen(server)
 var mysql
 var con
+var fc = 0 // record broadcast(fight , counter) or emit all(other)
 function mysqlConnect(){
   mysql = require('mysql');                                                                                      
   con = mysql.createConnection({
@@ -120,7 +121,14 @@ io.on('connection', function (socket) {
     // listen update info
     socket.on('updateInfo', function (data) {
       // send newest data to all client
-      io.sockets.emit('updateResult', processUpdateInfo(data))
+      fc = 0
+      var newData = processUpdateInfo(data)
+      if(fc === 1){
+        socket.broadcast.emit('updateResult', newData)
+      }
+      else{
+        io.sockets.emit('updateResult', newData)
+      }
     })
 
   })
@@ -162,53 +170,68 @@ function processUpdateInfo (data) {
 
 /****SEARCH******************************************************/
 var percent = 80
+  
   // when player search
   if (data.heroState.search === 1) {
 
-    // search all player, push to searched
-    console.log(allPlayerInfo.hall[n].userName +" search!")
+    console.log(allPlayerInfo.hall[n].userName + " press search button")
 
+    //如果有search到的人，把他push到searched[]中
     for (let i = 0; i < allPlayerInfo.hall.length; i++) {
-      if ((allPlayerInfo.hall[i].userID != data.userID) && (allPlayerInfo.hall[i].heroState.locate === data.heroState.locate) && (allPlayerInfo.hall[i].heroState.fighting !== 1)) {
+      // 不是自己 && 找地點一樣的 && 沒有在打架的
+      if ((allPlayerInfo.hall[i].userID != data.userID) && (allPlayerInfo.hall[i].heroState.locate === data.heroState.locate)) {
         searched.push(allPlayerInfo.hall[i].userID)
       }
     }
 
-    // find out which player searched
+    // 如果有找到一個以上的人，先判斷找到人(80%)還是找到物品(20%)
     if (searched.length > 0) {
-      // random probability, 80% search enermy , 20% search treasure
-      // 1 - 100 , if 1~8=enermy
       var random = Math.floor((Math.random() * 100) + 1)
       console.log("randomm 的數字 = " + random)
+
+      //如果找到人，從searched隨機中選擇一個人
       if (random < percent) {
-        // choose an enermy
         enermy = searched[Math.floor((Math.random() * searched.length))]
         console.log('enermy id = ' + enermy)
-
-        // change info, player who search and searched
         allPlayerInfo.hall[n].heroState.searched.enermy = enermy
-      } else {
-        allPlayerInfo.hall[n].heroState.searched.enermy = '0'
+        allPlayerInfo.hall[n].heroState.searched.found = 1
+        allPlayerInfo.hall[n].heroState.search = 0
+
+      } 
+      //如果找到物品，random物品，把search
+      else {
+        allPlayerInfo.hall[n].heroState.searched.enermy = 0
       }
     }
   }
 
 /****FIGHT***********************************************************/
 
+  // 找到人之後的兩秒內，如果選擇打那個人(enermy)，fight會等於1
   if (data.heroState.searched.fight === 1) {
+    fc = 1;
+    //找enermy的index
     var z = ssearchIndex(data.heroState.searched.enermy)
-    allPlayerInfo.hall[n].heroState.searched.enermy = 0
     allPlayerInfo.hall[n].heroState.searched.fight = 0
     allPlayerInfo.hall[z].heroState.searched.fighted = 1
-    //allPlayerInfo.hall[z].heroState.hp -= 10
+
+    //利用反擊率，隨機會不會成功反擊
+    var counter = Math.floor((Math.random() * 100) + 1)
+    console.log("counter = " + counter)
+
+    if(counter < allPlayerInfo.hall[n].heroState.counterPercent){
+      console.log("in counter")
+      allPlayerInfo.hall[n].heroState.searched.counter = 1;
+    }
+
   }
 
-
-/**************count fight score**********************/
-//  if(data.heroState.search.score )
-
-
   showAll(n)
+
+
+/*清空必要狀態**************************************************/
+  // 在最後清空，search
+  allPlayerInfo.hall[n].heroState.search = 0
 
   return allPlayerInfo
 }
@@ -216,7 +239,6 @@ var percent = 80
 function showAll(n){
   console.log('--------------All player info-------------')
 
-  allPlayerInfo.hall[n].heroState.search = 0
 
   for (let i = 0; i < allPlayerInfo.hall.length; i++) {
     console.log(JSON.stringify(allPlayerInfo.hall[i]))

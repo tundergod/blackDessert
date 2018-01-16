@@ -41,16 +41,20 @@ Client.sendUpdateInfo = function () {
 Client.socket.on('updateResult', function (data) {
   if(playerInfo.userID){
     var n = searchIndex(data, playerInfo.userID)
-    // copy data
+
+    // copy playerInfo data
     playerInfo = data.hall[n]
 
-    // update hp
+    // update player hp
     if(typeof(sceneState.hpText) != "undefined"){
-      sceneState.hpText = playerInfo.heroState.hp
+      sceneState.hpText.text = 'HP:' + playerInfo.heroState.hp
     }
-    /* FIGHT , 2 second*/
-    if (playerInfo.heroState.searched.enermy != 0) {
+
+    // fight button , 3 second colddown
+    if (playerInfo.heroState.searched.found === 1) {
       console.log("search an enermy!") 
+      playerInfo.heroState.searched.found = 0
+      playerInfo.heroState.xxxxxxxxxxx = 1
       sceneState.attackButton.loadTexture("attackButtonActive")                                                                          
       sceneState.attackButton.inputEnabled = true                                                                                          
       sceneState.attackButton.events.onInputDown.add(sceneState.pressAttack)
@@ -59,19 +63,28 @@ Client.socket.on('updateResult', function (data) {
       sceneState.enermyhp.text = "xxx"
       sceneState.enermyatk.text = "xxx"
       sceneState.enermydef.text = "xxx"
-      sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
+      sceneState.time.events.add(Phaser.Timer.SECOND * 3, back, this)
     } 
 
+    // 如果被打，進入miniGame函式
     if(playerInfo.heroState.searched.fighted === 1){
-      playerInfo.heroState.fighting = 1 
       playerInfo.heroState.searched.fighted = 0
-      console.log("attacked!!!!!!!!")
-      game.state.start('miniGameState', true, false, sceneState.sceneData)
+      playerInfo.heroState.searched.counter = 0
+      playerInfo.heroState.xxxxxxxxxxx = 0
+      Client.sendUpdateInfo()
+      console.log("fighted")
+      miniGame()
     }
 
-    if(playerInfo.heroState.hp < 0){
-      game.state.start('gameOverState')
-    } 
+    if(playerInfo.heroState.searched.counter === 1){
+      playerInfo.heroState.searched.counter = 0
+      playerInfo.heroState.searched.fighted = 0
+      playerInfo.heroState.xxxxxxxxxxx = 2
+      Client.sendUpdateInfo()
+      console.log("counter")
+      miniGame()
+    }
+
   }
 })
 
@@ -92,4 +105,47 @@ function searchIndex (data, id) {
       return i
     }
   }
+}
+
+var button = []
+var numButton = 4
+var count = 0
+
+function miniGame(){
+  var numLine = 4
+  var speed = 500
+
+  // 開啓物理引擎
+  game.physics.startSystem(Phaser.Physics.ARCADE)
+  game.physics.arcade.gravity.y = speed
+
+  // 時間函數，間隔0.2秒觸發numButton次
+  game.time.events.repeat(Phaser.Timer.SECOND * 0.2, numButton, createButton)
+  
+  function createButton(){
+    var random = Math.floor((Math.random() * numLine))
+    button[count] = game.add.sprite(0, -100, 'head1')
+    button[count].scale.setTo(0.2, 0.2)
+    button[count].position.x = game.world.centerX - (button[count].width * (numLine / 2) - 10 * (numLine / 2)) + (button[count].width * random + 10 * random)  
+    game.physics.enable(button[count], Phaser.Physics.ARCADE)
+    button[count].inputEnabled = true
+    button[count].events.onInputDown.add(boom,{n : count})
+    count++
+    console.log(count)
+  }
+
+  function boom(){
+    var boom = game.add.sprite(button[this.n].position.x, button[this.n].position.y, 'kaboom');
+    boom.animations.add('booooom');
+    boom.animations.play('booooom', 80, false, true);
+    button[this.n].destroy()
+  }
+
+}
+
+function minusHP(){
+  
+  playerInfo.heroState.hp -= 10;
+  console.log("hp = " + playerInfo.heroState.hp)
+  Client.sendUpdateInfo()
 }

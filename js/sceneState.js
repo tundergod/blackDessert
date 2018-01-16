@@ -17,6 +17,18 @@ sceneState.init = function(sceneData){
 
 sceneState.update = function(){
   sceneState.timerText.text = updateTimer()                                                                                 
+
+  for(let i = 0; i < count+40 ; i++){
+    if(typeof(button[i]) != "undefined"){
+      if(button[i].position.y > height){
+        minusHP()
+        button[i].position.y = -1000    
+      }
+      if(button[i].position.y < -500){
+        button[i].destroy()
+      }
+    }
+  }
 }
 
 
@@ -103,10 +115,8 @@ sceneState.search = function(){
   sceneState.walkButton.inputEnabled = false
   sceneState.time.events.add(Phaser.Timer.SECOND * 3, sceneState.searchBack, this)
 
-/*****send message to server*****/
   playerInfo.heroState.search = 1
   Client.sendUpdateInfo()
-/********************************/
 }
 
 sceneState.searchBack = function(){
@@ -116,22 +126,10 @@ sceneState.searchBack = function(){
 }
 
 sceneState.skill = function(){
-  console.log("use skill www")
-  
-/*****send message to server*****/
-
-/********************************/
-
 }
 
 sceneState.backState = function(){
-
-/*****send message to server*****/
-
   playerInfo.heroState.locate = ''
-
-/********************************/
-
   game.state.start('mapState', false, false, sceneState.sceneData)
 }
 
@@ -141,8 +139,5 @@ sceneState.pressAttack = function(){
   sceneState.attackButton.inputEnabled = false
   console.log('attack')
   playerInfo.heroState.searched.fight = 1
-  playerInfo.heroState.fighting = 1
   Client.sendUpdateInfo()
-  game.state.start('miniGameState', false, false, sceneState.sceneData)
 }
-
