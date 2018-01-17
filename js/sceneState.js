@@ -18,7 +18,17 @@ sceneState.init = function(sceneData){
 }
 
 sceneState.update = function(){
-  sceneState.timerText.text = updateTimer()                                                                                 
+  Client.socket.emit('serverTime', 'getServerTime', function(response){
+    timeCurrent = response;
+    time = Math.round((timeCurrent - chooseState.timeStart) / 1000);
+    min = Math.floor(time / 60)
+    sec = time % 60
+    result = (min < 10) ? "0" + min : min;
+    result += (sec < 10) ? ":0" + sec : ":" + sec;
+    //console.log(result)
+    sceneState.timerText.text = result                                                                                 
+    //return result
+  })                                                                                 
 
   for(let i = (count - 20); i < (count + 20) ; i++){
     if(typeof(button[i]) != "undefined"){

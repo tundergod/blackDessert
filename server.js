@@ -5,7 +5,7 @@ var io = require('socket.io').listen(server)
 var mysql
 var con
 var fc = 0 // record broadcast(fight , counter) or emit all(other)
-var port = 7789
+var port = 7777
 
 function mysqlConnect(){
   mysql = require('mysql');                                                                                      
@@ -78,12 +78,43 @@ io.on('connection', function (socket) {
         console.log('A player is connecting......' + ' player ID = ' + id)
         socket.emit('askplayerID', info)
         socket.emit('loginStateConfirmSocket', info.userName)
-        //console.log(info)
-        //con.end()
-      });
+        socket.emit('joining')
+
+        socket.on('disconnect', function(){
+          console.log(info.userName + ' disconnected');
+          deletePlayer(info.userID)
+          io.in('room123').clients((err, clients) => {
+            io.sockets.in('room123').emit('ready', clients.length);
+          })
+        })
       mysqlDisconnect();
+      });
     })
     
+    socket.on('room', function(room){
+      socket.join(room);
+      //console.log('join room '+room)
+      io.in('room123').clients((err, clients) => {
+        io.sockets.in(room).emit('ready', clients.length);
+        if(clients.length == 10){
+          //start timer
+          
+        }
+      });
+    });
+    
+    socket.on('pending', function(status, callback){
+      io.in('room123').clients((err, clients) => {
+        callback(clients.length)
+      }); 
+    }) 
+    
+    //get serverTime
+    socket.on('serverTime', function(status, callback){
+      date = new Date()
+      callback(date.getTime())
+    })
+
     socket.on('accRegisterSocket', function(accInfo){
       mysqlConnect();
       var temp = 1
@@ -132,6 +163,17 @@ io.on('connection', function (socket) {
       }
     })
 
+    socket.on('playerDie', function(data){
+      console.log('lasy')
+      console.log(data.userID + 'die')
+      deletePlayer(data.userID)
+    })
+
+    socket.on('checkAlive', function(status, callback){
+      callback(allPlayerInfo.hall.length)
+      console.log('checkAlive = '+allPlayerInfo.hall.length)
+    })
+
   })
 })
 
@@ -158,6 +200,12 @@ function ssearchIndex (id) {
     }
   }
   return -1
+}
+
+function deletePlayer(id){
+  var n = ssearchIndex(id)
+  allPlayerInfo.hall.splice(n, 1);
+  showAll(n)
 }
 
 function processUpdateInfo (data) {

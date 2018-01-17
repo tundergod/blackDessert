@@ -70,6 +70,7 @@ startTimer = function(){
   timerText.anchor.setTo(0.5, 0)
 
 }
+/*
 var time, min, sec, result
 updateTimer =  function(){
 
@@ -81,7 +82,7 @@ updateTimer =  function(){
   result += (sec < 10) ? ":0" + sec : ":" + sec;
   return result
 //  timerText.text = result;
-}
+}*/
 
 // game start
 game.state.start('bootState')

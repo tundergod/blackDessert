@@ -25,11 +25,18 @@ Client.registerAcc = function(accInfo){
   Client.socket.emit('accRegisterSocket',accInfo)
 }
 
-// 1-2. 確認帳號對不對
-/*Client.socket.on('loginStateConfirmSocket', function(data){
-  playerInfo.userName = data;
-  console.log('1-2socket = '+playerInfo.userName)
-})*/
+Client.joining = function(){
+  console.log('joining room')
+  Client.socket.emit('room', 'room123')  
+}
+
+Client.socket.on('disconnect', function(){
+  Client.socket.emit('ttestFunction', 'disconnect')
+});
+
+Client.socket.on('message', function(data){
+  console.log('Incoming message: ', data);
+});
 
 // 2.接收確認與ID
 Client.socket.on('askplayerID', function (data) {
@@ -43,22 +50,30 @@ Client.sendUpdateInfo = function () {
   Client.socket.emit('updateInfo', playerInfo)
   //console.log(playerInfo)
 }
-
 Client.socket.on('updateResult', function (data) {
   if(playerInfo.userID){
     var n = searchIndex(data, playerInfo.userID)
     // copy playerInfo data
     playerInfo = data.hall[n]
     var z = searchIndex(data, playerInfo.heroState.searched.enermy)
-
+    console.log(playerInfo.heroState.searched.enermy)
+    console.log(z)
     // update player hp
     if(typeof(sceneState.hpText) != "undefined"){
       sceneState.hpText.text = 'HP:' + playerInfo.heroState.hp
       if(playerInfo.heroState.hp <= 0){
+        console.log(playerInfo)
         game.state.start("gameOverState")
       }
     }
-
+    if(playerInfo.heroState.hp > 0){
+      Client.socket.emit('checkAlive', 'alive_value', function(response){
+        console.log('response ' + response)
+        if(response == 1){
+          game.state.start('winState')
+        }
+      })
+    }
     // fight button , 3 second colddown
     if (playerInfo.heroState.searched.found === 1) {
       console.log("search an enermy!") 
@@ -178,6 +193,7 @@ function miniGame(){
 
 function minusHP(){
   console.log("edef = " + enermyDef)
+  console.log(playerInfo)
   playerInfo.heroState.hp = playerInfo.heroState.hp - (playerInfo.heroState.atk - enermyDef);
   Client.sendUpdateInfo()
 }

@@ -27,15 +27,15 @@ loaderState.preload = function(){
   game.load.image('downArrow', '../assets/scene_class/arrow_down.png');
 
   // load actor 
-  game.load.image('assassin', '../assets/actor/Assassin.png')
+  game.load.image('assassin', '../assets/actor/assassin.png')
   game.load.image('druid', '../assets/actor/Druid.png')
   game.load.image('knight', '../assets/actor/Elf_Knight.png')
   game.load.image('fairy', '../assets/actor/Fairy.png')
-  game.load.image('ninja', '../assets/actor/Ninja.png')
+  game.load.image('ninja', '../assets/actor/ninja.png')
   game.load.image('nun', '../assets/actor/Nun.png')
   game.load.image('poet', '../assets/actor/Poet.png')
   game.load.image('sniper', '../assets/actor/Sniper.png')
-  game.load.image('swordman', '../assets/actor/Swordman.png')
+  game.load.image('swordman', '../assets/actor/swordman.png')
   game.load.image('warrior', '../assets/actor/Warrior.png')
 
   // laod map and scene
@@ -85,6 +85,7 @@ loaderState.preload = function(){
   game.load.image('chooseHeroName','../assets/scene_class/class_name_window.png')
   game.load.image('black','../assets/black.jpg')
   game.load.image('gameover','../assets/gameover.png')
+  game.load.image('win','../assets/scene_gameover/win.png')
   game.load.spritesheet('kaboom','../assets/explode.png', 128,128)
 
   game.load.image('button_login', '../assets/scene_login/login_button.png')
@@ -92,7 +93,8 @@ loaderState.preload = function(){
   game.load.image('button_cancel', '../assets/scene_login/cancel_button.png')
   game.load.image('window_login', '../assets/scene_login/login_window.png')
   game.load.image('window_register', '../assets/scene_login/register_window.png')
-
+  game.load.image('button_pair', '../assets/scene_login/pair_button.png')
+  
   game.load.image('enermyInfo', '../assets/enemy_window.png')
   game.load.image('ball', '../assets/drangon_ball_7.png')
   game.load.audio('song','../assets/lightness.mp3')

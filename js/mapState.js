@@ -7,7 +7,15 @@ mapState.init = function(data){
 }
 */
 mapState.update = function(){
-  mapState.timerText.text = updateTimer()
+  Client.socket.emit('serverTime', 'getServerTime', function(response){
+    timeCurrent = response;
+    time = Math.round((timeCurrent - chooseState.timeStart) / 1000);
+    min = Math.floor(time / 60)
+    sec = time % 60
+    result = (min < 10) ? "0" + min : min;
+    result += (sec < 10) ? ":0" + sec : ":" + sec;
+    mapState.timerText.text = result
+  })  
 }
 
 mapState.create = function(){
