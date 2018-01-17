@@ -268,6 +268,8 @@ function processUpdateInfo (data) {
     var z = ssearchIndex(data.heroState.searched.enermy)
     allPlayerInfo.hall[n].heroState.searched.fight = 0
     allPlayerInfo.hall[z].heroState.searched.fighted = 1
+    allPlayerInfo.hall[z].heroState.searched.attacker =  allPlayerInfo.hall[n].userID
+
 
     if(allPlayerInfo.hall[n].heroChoose === "assassin"){
       allPlayerInfo.hall[z].heroState.searched.skillEffect = 1

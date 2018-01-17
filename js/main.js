@@ -57,6 +57,7 @@ var playerInfo = {
     "searched":{
       "found":"0",
       "enermy":"0", //no enermy = 0, got enermy = enermy userID。 對手是誰
+      "attacker":"0",
       "fight":"0", //if searched an enermy, fight = 1
       "fighted":"0", //if someone searched player and fight him, = 1, else = 0
       "counter":"0",

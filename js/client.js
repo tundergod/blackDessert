@@ -4,7 +4,7 @@ var count = 0
 var speed = 600
 var numButton = 5
 var numLine = 4
-var enermyDef
+var enermyATK = 0
 
 Client.socket = io.connect()
 
@@ -56,8 +56,8 @@ Client.socket.on('updateResult', function (data) {
     // copy playerInfo data
     playerInfo = data.hall[n]
     var z = searchIndex(data, playerInfo.heroState.searched.enermy)
-    console.log(playerInfo.heroState.searched.enermy)
-    console.log(z)
+   // console.log(playerInfo.heroState.searched.enermy)
+    //console.log(z)
     // update player hp
     if(typeof(sceneState.hpText) != "undefined"){
       sceneState.hpText.text = 'HP:' + playerInfo.heroState.hp
@@ -87,12 +87,14 @@ Client.socket.on('updateResult', function (data) {
       sceneState.enermyhp.text = data.hall[z].heroState.hp
       sceneState.enermyatk.text = data.hall[z].heroState.atk
       sceneState.enermydef.text = data.hall[z].heroState.def
-      enermyDef = data.hall[z].heroState.def
       sceneState.time.events.add(Phaser.Timer.SECOND * 2, back, this)
     } 
 
     // 如果被打
     if(playerInfo.heroState.searched.fighted === 1){
+      var y = searchIndex(data, playerInfo.heroState.searched.attacker)
+      console.log("search by " + data.hall[y].userName)
+      enermyATK = data.hall[y].heroState.atk
       skillEffect()
       playerInfo.heroState.searched.fighted = 0
       playerInfo.heroState.searched.counter = 0
@@ -104,6 +106,9 @@ Client.socket.on('updateResult', function (data) {
   
     // 如果被反擊
     if(playerInfo.heroState.searched.counter === 1){
+      var y = searchIndex(data, playerInfo.heroState.searched.attacker)
+      console.log("search by " + data.hall[y].userName)
+      enermyATK = data.hall[y].heroState.atk
       skillEffect()
       playerInfo.heroState.searched.counter = 0
       playerInfo.heroState.searched.fighted = 0
@@ -192,8 +197,8 @@ function miniGame(){
 }
 
 function minusHP(){
-  console.log("edef = " + enermyDef)
+  console.log("eATK " + enermyATK)
   console.log(playerInfo)
-  playerInfo.heroState.hp = playerInfo.heroState.hp - (playerInfo.heroState.atk - enermyDef);
+  playerInfo.heroState.hp = playerInfo.heroState.hp - (enermyATK - playerInfo.heroState.def);
   Client.sendUpdateInfo()
 }
