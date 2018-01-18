@@ -63,6 +63,7 @@ Client.socket.on('updateResult', function (data) {
       sceneState.hpText.text = 'HP:' + playerInfo.heroState.hp
       if(playerInfo.heroState.hp <= 0){
         console.log(playerInfo)
+        Client.socket.emit('playerDie', playerInfo)
         game.state.start("gameOverState")
       }
     }

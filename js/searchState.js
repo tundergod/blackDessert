@@ -5,6 +5,9 @@ searchState.create = function(){
 TODO : search game -> 10 player 1 room (through socket.io)
 */
 
+// room capacity
+var room_capacity = 2
+
 /*****send message to server*****/
 
   playerInfo.playerState = state[3] 
@@ -19,7 +22,7 @@ TODO : search game -> 10 player 1 room (through socket.io)
   searchState.pair_button.position.y = game.world.centerY - searchState.pair_button.height/2
   searchState.pair_button.inputEnabled = true
   searchState.pair_button.events.onInputDown.add(searchState.searchGame, this)
-    searchState.total = game.add.text(game.world.centerX*1.1 , game.world.centerY * 1.3, '/ 10', {
+    searchState.total = game.add.text(game.world.centerX*1.1 , game.world.centerY * 1.3, '/ 2', {
     font: '22px Arial',
     fill: '#ffffff'
   });
@@ -34,7 +37,7 @@ TODO : search game -> 10 player 1 room (through socket.io)
     searchState.nowReady.text = data
     //game time start
     //room max population
-    if(data == 2){
+    if(data == room capacity){
       searchState.nextState()
       console.log(data)
     }

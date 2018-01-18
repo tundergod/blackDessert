@@ -288,10 +288,10 @@ chooseState.choosePlayer = function(){
   }
 
   if(playerInfo.heroChoose === 'swordman'){
-    playerInfo.heroState.counterPercent = 40
+    playerInfo.heroState.counterPercent = 70
   }
   else{
-    playerInfo.heroState.counterPercent = 20
+    playerInfo.heroState.counterPercent = 50
   }
 
   if(playerInfo.heroChoose === 'swordman'){
